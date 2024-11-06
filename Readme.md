@@ -64,6 +64,9 @@ Pensando na modelagem temos a receita como nossa classe principal, ou central, e
     - recipes
     - reviews
     - roles: niveis de acesso do usuario
+10. Role "Enum":
+    - ADMIN: podera editar e deletar qualquer receita
+    - USER: podera editar e deletar apenas suas receitas 
 
 #### Diagrama de Classes
 
@@ -126,6 +129,12 @@ classDiagram
         EXPERIENCED
     }
 
+    class Role{
+    <<enumeration>>
+    ADMIN
+    USER
+    }
+
     Recipe "1" *-- "1..*" RecipeIngredient : ingredients
     Recipe "1" *-- "1..*" Step: Steps
     
@@ -140,4 +149,5 @@ classDiagram
 
     User "1" *-- "0..*" Review : reviews
     User "1" o-- "0..*" Recipe : recipes
+    User "1" *-- "1..*" Role: roles
 ```

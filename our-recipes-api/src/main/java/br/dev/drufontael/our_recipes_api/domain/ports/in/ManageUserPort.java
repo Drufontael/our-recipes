@@ -9,7 +9,7 @@ public interface ManageUserPort {
     void delete(User user);
     void addRole(User user, Role role);
     User findByUsername(String username);
-    Boolean logar(String username, String password);
+
 
 
 

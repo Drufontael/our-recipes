@@ -1,8 +1,8 @@
 package br.dev.drufontael.our_recipes_api.domain.model;
 
-public class Step {
+public class Step implements Comparable<Step> {
 
-    private Long id;
+
     private int stepNumber;
     private String description;
     private Recipe recipe;
@@ -10,19 +10,13 @@ public class Step {
     public Step() {
     }
 
-    public Step(Long id, int stepNumber, String description) {
-        this.id = id;
+    public Step( int stepNumber, String description) {
+
         this.stepNumber = stepNumber;
         this.description = description;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public int getStepNumber() {
         return stepNumber;
@@ -46,5 +40,12 @@ public class Step {
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
+    }
+
+    @Override
+    public int compareTo(Step o) {
+        if (this.getStepNumber() > o.getStepNumber()) return 1;
+        if (this.getStepNumber() < o.getStepNumber()) return -1;
+        return 0;
     }
 }

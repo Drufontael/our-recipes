@@ -1,6 +1,6 @@
 package br.dev.drufontael.our_recipes_api.domain.model;
 
-public class RecipeIngredient {
+public class RecipeIngredient implements Comparable<RecipeIngredient> {
     private Ingredient ingredient;
     private double quantity;
     private MeasurementUnit measurementUnit;
@@ -50,5 +50,10 @@ public class RecipeIngredient {
     @Override
     public int hashCode() {
         return ingredient.hashCode();
+    }
+
+    @Override
+    public int compareTo(RecipeIngredient o) {
+        return this.ingredient.compareTo(o.ingredient);
     }
 }

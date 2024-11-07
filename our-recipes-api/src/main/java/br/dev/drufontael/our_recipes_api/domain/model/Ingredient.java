@@ -1,6 +1,6 @@
 package br.dev.drufontael.our_recipes_api.domain.model;
 
-public class Ingredient {
+public class Ingredient implements Comparable<Ingredient> {
 
     private Long id;
     private String name;
@@ -37,5 +37,10 @@ public class Ingredient {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int compareTo(Ingredient o) {
+        return this.name.compareTo(o.name);
     }
 }

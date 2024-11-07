@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class Recipe {
+public class Recipe implements Comparable<Recipe> {
+
     private Long id;
     private String name;
     private String description;
@@ -124,5 +125,12 @@ public class Recipe {
 
     public void addTag(Tag tag) {
         this.tags.add(tag);
+    }
+
+    @Override
+    public int compareTo(Recipe o) {
+        if (this.getRating() > o.getRating()) return -1;
+        if (this.getRating() < o.getRating()) return 1;
+        return 0;
     }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface ManageTagPort {
     Tag register(Tag tag);
+    void register(String[] tagsNames);
     void update(Tag tag);
     void delete(Tag tag);
     Tag findById(Long id);

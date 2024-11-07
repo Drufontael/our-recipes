@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public interface PersistenceUserPort {
 
-    void save(User user);
+    User save(User user);
     Optional<User> findByUsername(String username);
     void delete(User user);
 }

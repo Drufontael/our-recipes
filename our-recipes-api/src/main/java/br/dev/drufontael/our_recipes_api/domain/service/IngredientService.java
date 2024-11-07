@@ -17,11 +17,11 @@ public class IngredientService implements ManageIngredientPort {
         this.persistence = persistence;
     }
     @Override
-    public void register(Ingredient ingredient) {
+    public Ingredient register(Ingredient ingredient) {
         for(Ingredient i:findByName(ingredient.getName())) {
             if(i.getName().equals(ingredient.getName())) throw new ResourceAlreadyExistsException("Ingredient already exists");
         }
-        persistence.save(ingredient);
+        return persistence.save(ingredient);
     }
 
     @Override

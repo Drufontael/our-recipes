@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ManageIngredientPort {
 
-    void register(Ingredient ingredient);
+    Ingredient register(Ingredient ingredient);
     void register(Ingredient[] ingredients);
     void register(String[] ingredientsNames);
     void update(Ingredient ingredient);

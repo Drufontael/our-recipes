@@ -15,9 +15,9 @@ public class UserService implements ManageUserPort {
         this.persistence = persistence;
     }
     @Override
-    public void register(User user) {
+    public User register(User user) {
         if (persistence.findByUsername(user.getUsername()).isPresent()) throw new UserAlreadyExistsException();
-        persistence.save(user);
+        return persistence.save(user);
     }
 
     @Override

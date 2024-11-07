@@ -7,7 +7,7 @@ import java.util.Optional;
 
 public interface PersistenceIngredientPort {
 
-    void save(Ingredient ingredient);
+    Ingredient save(Ingredient ingredient);
     void save(Ingredient[] ingredients);
     void delete(Ingredient ingredient);
     void update(Ingredient ingredient);

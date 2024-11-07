@@ -5,7 +5,7 @@ public class Step implements Comparable<Step> {
 
     private int stepNumber;
     private String description;
-    private Recipe recipe;
+    private Recipe recipe;//TODO: Verificar se é necessário   >
 
     public Step() {
     }

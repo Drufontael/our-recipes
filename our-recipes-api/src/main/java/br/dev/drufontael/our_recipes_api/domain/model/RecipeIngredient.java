@@ -26,7 +26,7 @@ public class RecipeIngredient implements Comparable<RecipeIngredient> {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 

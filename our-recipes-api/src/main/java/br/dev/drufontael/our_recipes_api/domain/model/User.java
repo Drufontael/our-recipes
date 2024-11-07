@@ -78,4 +78,8 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
+    public void removeRecipe(Recipe recipe) {
+        this.recipes.remove(recipe);
+    }
 }

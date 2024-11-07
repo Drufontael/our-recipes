@@ -9,6 +9,6 @@ public interface ManageTagPort {
     void register(String[] tagsNames);
     void update(Tag tag);
     void delete(Tag tag);
-    Tag findById(Long id);
+    Tag findByName(String name);
     List<Tag> findAll();    
 }

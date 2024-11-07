@@ -5,7 +5,7 @@ import java.util.Set;
 
 public class Tag {
     private String name;
-    private Set<Recipe> recipes = new HashSet<Recipe>();
+    private Set<Recipe> recipes = new HashSet<Recipe>();//TODO: Verificar se é necessário
 
     public Tag() {
     }

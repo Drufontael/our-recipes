@@ -1,10 +1,7 @@
 package br.dev.drufontael.our_recipes_api.domain.model;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Recipe implements Comparable<Recipe> {
 
@@ -96,6 +93,7 @@ public class Recipe implements Comparable<Recipe> {
     }
 
     public List<Step> getSteps() {
+        Collections.sort(steps);
         return steps;
     }
 
@@ -113,6 +111,7 @@ public class Recipe implements Comparable<Recipe> {
 
     public void addStep(Step step) {
         this.steps.add(step);
+        step.setStepNumber(this.steps.size());
     }
 
     public void addIngredient(RecipeIngredient ingredient) {

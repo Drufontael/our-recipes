@@ -8,7 +8,6 @@ import java.util.Optional;
 public interface PersistenceMeasurementUnitPort {
     MeasurementUnit save(MeasurementUnit measurementUnit);
     void delete(MeasurementUnit measurementUnit);
-    MeasurementUnit update(MeasurementUnit measurementUnit);
     Optional<MeasurementUnit> findById(Long id);
     List<MeasurementUnit> findAll();
 }

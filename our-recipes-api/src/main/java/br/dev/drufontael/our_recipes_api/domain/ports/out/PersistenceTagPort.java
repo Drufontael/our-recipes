@@ -8,7 +8,6 @@ import java.util.Optional;
 public interface PersistenceTagPort {
     Tag save(Tag tag);
     void delete(Tag tag);
-    Tag update(Tag tag);
-    Optional<Tag> findById(Long id);
+    Optional<Tag> findByName(String name);
     List<Tag> findAll();
 }

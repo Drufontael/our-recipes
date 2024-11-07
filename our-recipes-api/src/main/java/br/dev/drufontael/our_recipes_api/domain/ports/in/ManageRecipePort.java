@@ -26,28 +26,28 @@ public interface ManageRecipePort {
     //
     // Manipulação de ingredientes
     //
-    void addIngredient(Recipe recipe, RecipeIngredient ingredient);
-    RecipeIngredient updateIngredient(Recipe recipe, RecipeIngredient ingredient);
-    void removeIngredient(Recipe recipe, RecipeIngredient ingredient);
+    void addIngredient(Long recipeId, RecipeIngredient ingredient,User author);
+    RecipeIngredient updateIngredient(Long recipeId, RecipeIngredient ingredient,User author);
+    void removeIngredient(Long recipeId, RecipeIngredient ingredient,User author);
 
     //
     // Manipulação de passos
     //
-    void addStep(Recipe recipe, Step step);
-    Step updateStep(Recipe recipe, Step step);
-    void removeStep(Recipe recipe, Step step);
+    void addStep(Long recipeId, Step step,User author);
+    Step updateStep(Long recipeId, Step step,User author);
+    void removeStep(Long recipeId, Step step,User author);
 
     //
     // Manipulação de tags
     //
-    void addTag(Recipe recipe, Tag tag);
-    void removeTag(Recipe recipe, Tag tag);
+    void addTag(Long recipeId, Tag tag,User author);
+    void removeTag(Long recipeId, Tag tag,User author);
 
     //
     // Manipulação de avaliações
     //
-    void addReview(Recipe recipe, Review review);
-    Review updateReview(Recipe recipe, Review review);
-    void removeReview(Recipe recipe, Review review);
+    void addReview(Long recipeId, Review review,User author);
+    Review updateReview(Long recipeId, Review review,User author);
+    void removeReview(Long recipeId, Review review,User author);
 
 }

@@ -6,6 +6,7 @@ import br.dev.drufontael.our_recipes_api.domain.model.Role;
 import br.dev.drufontael.our_recipes_api.domain.model.User;
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageUserPort;
 import br.dev.drufontael.our_recipes_api.domain.ports.out.PersistenceUserPort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserService implements ManageUserPort {
 
@@ -15,8 +16,10 @@ public class UserService implements ManageUserPort {
         this.persistence = persistence;
     }
     @Override
-    public User register(User user) {
+    public User register(User user, PasswordEncoder encoder) {
         if (persistence.findByUsername(user.getUsername()).isPresent()) throw new UserAlreadyExistsException();
+        user.setPassword(encoder.encode(user.getPassword()));
+        user.addRole(Role.USER);
         return persistence.save(user);
     }
 

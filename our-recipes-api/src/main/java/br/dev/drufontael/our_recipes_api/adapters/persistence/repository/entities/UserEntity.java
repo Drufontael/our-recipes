@@ -21,8 +21,10 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(unique = true, nullable = false, length = 50)
     private String username;
     private String password;
+    @Column(length = 100)
     private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)

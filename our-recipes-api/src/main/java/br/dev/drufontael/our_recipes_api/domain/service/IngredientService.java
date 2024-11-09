@@ -32,7 +32,11 @@ public class IngredientService implements ManageIngredientPort {
     @Override
     public void register(String[] ingredientsNames) {
         for (String name : ingredientsNames) {
-            persistence.save(new Ingredient(null, name, ""));
+            try {
+                register(new Ingredient(null, name, ""));
+            } catch (ResourceAlreadyExistsException e) {
+                continue;
+            }
         }
     }
 

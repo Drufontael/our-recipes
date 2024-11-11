@@ -1,7 +1,6 @@
 package br.dev.drufontael.our_recipes_api.adapters.web;
 
-import br.dev.drufontael.our_recipes_api.adapters.web.dto.IngredientRequest;
-import br.dev.drufontael.our_recipes_api.adapters.web.dto.IngredientResponse;
+import br.dev.drufontael.our_recipes_api.adapters.web.dto.IngredientDto;
 import br.dev.drufontael.our_recipes_api.domain.model.Ingredient;
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageIngredientPort;
 import lombok.AllArgsConstructor;
@@ -18,9 +17,9 @@ public class IngredientControllerAdapter {
     private final ManageIngredientPort manageIngredientPort;
 
     @PostMapping
-    public ResponseEntity<IngredientResponse> register(@RequestBody IngredientRequest request){
+    public ResponseEntity<IngredientDto> register(@RequestBody IngredientDto request){
         Ingredient ingredient = manageIngredientPort.register(request.toDomain());
-        return ResponseEntity.ok(new IngredientResponse(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
+        return ResponseEntity.ok(new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
     }
 
     @PostMapping("/all")
@@ -30,22 +29,22 @@ public class IngredientControllerAdapter {
     }
 
     @GetMapping
-    public ResponseEntity<List<IngredientResponse>> getAll(){
+    public ResponseEntity<List<IngredientDto>> getAll(){
         List<Ingredient> ingredients = manageIngredientPort.getAll();
         return ResponseEntity.ok(ingredients.stream().map(ingredient ->
-            new IngredientResponse(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
+            new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<IngredientResponse> getById(@PathVariable Long id){
+    public ResponseEntity<IngredientDto> getById(@PathVariable Long id){
         Ingredient ingredient = manageIngredientPort.findById(id);
-        return ResponseEntity.ok(new IngredientResponse(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
+        return ResponseEntity.ok(new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
     }
 
     @GetMapping("/find/{name}")
-    public ResponseEntity<List<IngredientResponse>> getByName(@PathVariable String name){
+    public ResponseEntity<List<IngredientDto>> getByName(@PathVariable String name){
         return ResponseEntity.ok(manageIngredientPort.findByName(name).stream().map(ingredient ->
-            new IngredientResponse(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
+            new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
     }
 
     @DeleteMapping("/{id}")
@@ -56,11 +55,11 @@ public class IngredientControllerAdapter {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<IngredientResponse> update(@PathVariable Long id, @RequestBody IngredientRequest request){
+    public ResponseEntity<IngredientDto> update(@PathVariable Long id, @RequestBody IngredientDto request){
         Ingredient ingredient= manageIngredientPort.findById(id);
         ingredient.setName(request.name());
         ingredient.setDescription(request.description());
-        return ResponseEntity.ok(new IngredientResponse(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
+        return ResponseEntity.ok(new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
     }
 
 }

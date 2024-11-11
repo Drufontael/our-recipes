@@ -4,8 +4,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Tag {
+
     private String name;
-    private Set<Recipe> recipes = new HashSet<Recipe>();//TODO: Verificar se é necessário
+    private String description;
+
 
     public Tag() {
     }
@@ -22,11 +24,11 @@ public class Tag {
         this.name = name;
     }
 
-    public Set<Recipe> getRecipes() {
-        return recipes;
+    public String getDescription() {
+        return description;
     }
 
-    public void addRecipe(Recipe recipe) {
-        this.recipes.add(recipe);
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

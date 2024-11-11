@@ -1,9 +1,7 @@
 package br.dev.drufontael.our_recipes_api.infrastructure.configuration.bean;
 
-import br.dev.drufontael.our_recipes_api.domain.ports.out.PersistenceIngredientPort;
-import br.dev.drufontael.our_recipes_api.domain.ports.out.PersistenceUserPort;
-import br.dev.drufontael.our_recipes_api.domain.service.IngredientService;
-import br.dev.drufontael.our_recipes_api.domain.service.UserService;
+import br.dev.drufontael.our_recipes_api.domain.ports.out.*;
+import br.dev.drufontael.our_recipes_api.domain.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +12,9 @@ public class ServiceConfig {
 
     private final PersistenceUserPort persistenceUserPort;
     private final PersistenceIngredientPort persistenceIngredientPort;
+    private final PersistenceMeasurementUnitPort persistenceMeasurementUnitPort;
+    private final PersistenceRecipePort persistenceRecipePort;
+    private final PersistenceTagPort persistenceTagPort;
 
     @Bean
     public UserService userService() {
@@ -23,5 +24,20 @@ public class ServiceConfig {
     @Bean
     public IngredientService ingredientService() {
         return new IngredientService(persistenceIngredientPort);
+    }
+
+    @Bean
+    public MeasurementUnitService measurementUnitService() {
+        return new MeasurementUnitService(persistenceMeasurementUnitPort);
+    }
+
+    @Bean
+    public RecipeService recipeService() {
+        return new RecipeService(persistenceRecipePort,persistenceUserPort);
+    }
+
+    @Bean
+    public TagService tagService() {
+        return new TagService(persistenceTagPort);
     }
 }

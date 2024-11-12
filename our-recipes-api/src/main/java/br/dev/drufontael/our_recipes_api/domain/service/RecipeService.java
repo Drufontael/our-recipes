@@ -67,19 +67,15 @@ public class RecipeService implements ManageRecipePort {
     }
 
     @Override
-    public List<Recipe> getRecipes(Map<String, String> filters) {
+    public List<Recipe> getRecipes(Map<String, List<String>> filters) {
         List<Recipe> authorRecipes = getRecipes();
         if (filters.containsKey("author")) {
-            User user = persistenceUserPort.findByUsername(filters.get("author")).orElse(new User());
+            User user = persistenceUserPort.findByUsername(filters.get("author").get(0)).orElse(new User());
             authorRecipes.removeIf(recipe -> !recipe.getAuthor().equals(user));
         }
         List<Tag> tags = new ArrayList<>();
         if (filters.containsKey("tags")) {
-            String[] tagNames = filters.get("tags")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .split(",");
-            for (String tagName : tagNames) {
+            for (String tagName : filters.get("tags")) {
                 Tag tag = new Tag();
                 tag.setName(tagName);
                 tags.add(tag);
@@ -87,11 +83,7 @@ public class RecipeService implements ManageRecipePort {
         }
         List<Ingredient> ingredients = new ArrayList<>();
         if (filters.containsKey("ingredients")) {
-            String[] ingredientNames = filters.get("ingredients")
-                    .replace("[", "")
-                    .replace("]", "")
-                    .split(",");
-            for (String ingredientName : ingredientNames) {
+            for (String ingredientName : filters.get("ingredients")) {
                 Ingredient ingredient = new Ingredient();
                 ingredient.setName(ingredientName);
                 ingredients.add(ingredient);

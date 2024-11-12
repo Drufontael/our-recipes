@@ -19,7 +19,7 @@ public interface ManageRecipePort {
     void updateRecipe(Recipe recipe,User author);
     void deleteRecipe(Recipe recipe,User author);
     List<Recipe> getRecipes();
-    List<Recipe> getRecipes(Map<String,String> filters);
+    List<Recipe> getRecipes(Map<String,List<String>> filters);
     Recipe getRecipe(Long id);
 
 

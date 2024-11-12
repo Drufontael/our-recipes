@@ -19,6 +19,7 @@ public class RecipeTagEntity {
     @JoinColumn(name = "recipe_id")
     @JsonBackReference
     private RecipeEntity recipe;
+    @ManyToOne
     @JoinColumn(name = "tag_id")
     private TagEntity tag;
 

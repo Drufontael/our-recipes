@@ -1,8 +1,5 @@
 package br.dev.drufontael.our_recipes_api.domain.model;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class Tag {
 
     private String name;

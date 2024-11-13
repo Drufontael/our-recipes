@@ -16,7 +16,7 @@ public interface ManageRecipePort {
                         int preparationTime,
                         Difficulty difficulty,
                         User author);
-    void updateRecipe(Recipe recipe,User author);
+    Recipe updateRecipe(Long id,Recipe recipe,User author);
     void deleteRecipe(Recipe recipe,User author);
     List<Recipe> getRecipes();
     List<Recipe> getRecipes(Map<String,List<String>> filters);

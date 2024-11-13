@@ -9,8 +9,6 @@ public class User {
     private String username;
     private String password;
     private String email;
-    private List<Recipe> recipes = new ArrayList<Recipe>();
-    private List<Review> reviews = new ArrayList<Review>();
     private List<Role> roles = new ArrayList<Role>();
 
     public User() {
@@ -55,21 +53,6 @@ public class User {
         this.email = email;
     }
 
-    public List<Recipe> getRecipes() {
-        return recipes;
-    }
-
-    public void addRecipe(Recipe recipe) {
-        this.recipes.add(recipe);
-    }
-
-    public List<Review> getReviews() {
-        return reviews;
-    }
-
-    public void addReview(Review review) {
-        this.reviews.add(review);
-    }
 
     public List<Role> getRoles() {
         return roles;
@@ -79,7 +62,5 @@ public class User {
         this.roles.add(role);
     }
 
-    public void removeRecipe(Recipe recipe) {
-        this.recipes.remove(recipe);
-    }
+
 }

@@ -17,8 +17,12 @@ public class MeasurementUnitService implements ManageMeasurementUnitPort {
     }
     @Override
     public MeasurementUnit register(MeasurementUnit measurementUnit) {
-        persistence.findById(measurementUnit.getId()).ifPresent(measurementUnitPresent ->
-        {throw new ResourceAlreadyExistsException("MeasurementUnit already exists");});
+        if(measurementUnit.getId()!=null) {
+            persistence.findById(measurementUnit.getId()).ifPresent(measurementUnitPresent ->
+            {
+                throw new ResourceAlreadyExistsException("MeasurementUnit already exists");
+            });
+        }
         return persistence.save(measurementUnit);
     }
 

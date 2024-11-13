@@ -34,27 +34,21 @@ public class RecipeService implements ManageRecipePort {
         recipe.setAuthor(author);
         recipe = persistence.save(recipe);
         Recipe finalRecipe = recipe;
-        persistenceUserPort.findByUsername(author.getUsername()).ifPresent(a -> {
-            a.addRecipe(finalRecipe);
-            persistenceUserPort.save(a);
-        });
         return recipe;
     }
 
     @Override
-    public void updateRecipe(Recipe recipe, User author) {
-        if(recipe.getAuthor().equals(author) || author.getRoles().contains(Role.ADMIN)){
-            persistence.save(recipe);
+    public Recipe updateRecipe(Long id, Recipe recipe, User author) {
+        Recipe recipeToUpdate = getRecipe(id);
+        if(recipeToUpdate.getAuthor().equals(author) || author.getRoles().contains(Role.ADMIN)){
+           return persistence.save(recipe);
         } else throw new UnauthorizedUserException("You are not allowed to update this recipe");
     }
 
     @Override
     public void deleteRecipe(Recipe recipe, User author) {
-        if(recipe.getAuthor().equals(author) || author.getRoles().contains(Role.ADMIN)){
-            persistenceUserPort.findByUsername(author.getUsername()).ifPresent(a -> {
-                a.removeRecipe(recipe);
-                persistenceUserPort.save(a);
-            });
+        Recipe recipeToDelete = getRecipe(recipe.getId());
+        if(recipeToDelete.getAuthor().equals(author) || author.getRoles().contains(Role.ADMIN)){
             persistence.delete(recipe);
         } else throw new UnauthorizedUserException("You are not allowed to delete this recipe");
     }
@@ -101,22 +95,19 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void addIngredient(Long recipeId, RecipeIngredient ingredient,User author) {
-        persistence.findById(recipeId).ifPresentOrElse(recipe -> {
-            recipe.addIngredient(ingredient);
-            updateRecipe(recipe,author);
-        }, () -> {
-            throw new ResourceNotFoundException("Recipe not found");
-        });
+        Recipe recipe = getRecipe(recipeId);
+        recipe.addIngredient(ingredient);
+        updateRecipe(recipeId,recipe,author);
     }
 
     @Override
     public RecipeIngredient updateIngredient(Long recipeId, RecipeIngredient ingredient,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (RecipeIngredient i : recipe.getIngredients()) {
             if(i.getIngredient().equals(ingredient.getIngredient())) {
                 i.setQuantity(ingredient.getQuantity());
                 i.setMeasurementUnit(ingredient.getMeasurementUnit());
-                updateRecipe(recipe,author);
+                updateRecipe(recipeId,recipe,author);
                 return i;
             }
         }
@@ -125,11 +116,11 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void removeIngredient(Long recipeId, RecipeIngredient ingredient,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (RecipeIngredient i : recipe.getIngredients()) {
             if(i.getIngredient().equals(ingredient.getIngredient())) {
                 recipe.getIngredients().remove(i);
-                updateRecipe(recipe,author);
+                updateRecipe(recipeId,recipe,author);
                 return;
             }
         }
@@ -139,18 +130,18 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void addStep(Long recipeId, Step step,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         recipe.addStep(step);
-        updateRecipe(recipe,author);
+        updateRecipe(recipeId,recipe,author);
     }
 
     @Override
     public Step updateStep(Long recipeId, Step step,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (Step s : recipe.getSteps()) {
             if(s.getStepNumber() == step.getStepNumber()) {
                 s.setDescription(step.getDescription());
-                updateRecipe(recipe,author);
+                updateRecipe(recipeId,recipe,author);
                 return s;
             }
         }
@@ -159,11 +150,12 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void removeStep(Long recipeId, Step step,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (Step s : recipe.getSteps()) {
             if(s.getStepNumber() == step.getStepNumber()) {
                 recipe.getSteps().remove(s);
-                updateRecipe(recipe,author);
+                rebuildStepNumber(recipe);
+                updateRecipe(recipeId,recipe,author);
                 return;
             }
         }
@@ -172,19 +164,19 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void addTag(Long recipeId, Tag tag,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         recipe.addTag(tag);
-        updateRecipe(recipe,author);
+        updateRecipe(recipeId,recipe,author);
 
     }
 
     @Override
     public void removeTag(Long recipeId, Tag tag,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (Tag t : recipe.getTags()) {
             if(t.getName().equals(tag.getName())) {
                 recipe.getTags().remove(t);
-                updateRecipe(recipe,author);
+                updateRecipe(recipeId,recipe,author);
                 return;
             }
         }
@@ -194,7 +186,7 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void addReview(Long recipeId, Review review,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         review.setUser(author);
         recipe.addReview(review);
         persistence.save(recipe);
@@ -203,7 +195,7 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public Review updateReview(Long recipeId, Review review,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (Review r : recipe.getReviews()) {
             if((r.getUser().equals(author) || author.getRoles().contains(Role.ADMIN)) && r.getId() == review.getId()) {
                 r.setRating(review.getRating());
@@ -217,7 +209,7 @@ public class RecipeService implements ManageRecipePort {
 
     @Override
     public void removeReview(Long recipeId, Review review,User author) {
-        Recipe recipe = persistence.findById(recipeId).orElseThrow(()->new ResourceNotFoundException("Recipe not found"));
+        Recipe recipe = getRecipe(recipeId);
         for (Review r : recipe.getReviews()) {
             if((r.getUser().equals(author) || author.getRoles().contains(Role.ADMIN)) && r.getId() == review.getId()) {
                 recipe.getReviews().remove(r);
@@ -262,6 +254,10 @@ public class RecipeService implements ManageRecipePort {
         List<Recipe> targetList = filterByOneIngredient(recipes, ingredients.get(0));
         ingredients.remove(0);
         return filterByMultipleIngredients(targetList, ingredients);
+    }
+
+    private void rebuildStepNumber(Recipe recipe){
+        recipe.getSteps().forEach(step -> step.setStepNumber(recipe.getSteps().indexOf(step)+1));
     }
 
 }

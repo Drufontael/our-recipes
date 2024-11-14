@@ -52,8 +52,8 @@ public class RecipeEntity {
         this.ingredients.addAll(recipe.getIngredients().stream()
                 .map(recipeIngredient -> new RecipeIngredientEntity(recipeIngredient, this)).toList());
         this.steps.addAll(recipe.getSteps().stream().map(step -> new StepEntity(step, this)).toList());
-        this.reviews.addAll(recipe.getReviews().stream().map(ReviewEntity::new).toList());
         this.author = new UserEntity(recipe.getAuthor());
+        this.reviews.addAll(recipe.getReviews().stream().map(review-> new ReviewEntity(review, this)).toList());
     }
 
     public Recipe toDomain() {

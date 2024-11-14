@@ -1,8 +1,6 @@
 package br.dev.drufontael.our_recipes_api.adapters.persistence.repository.entities;
 
-import br.dev.drufontael.our_recipes_api.domain.model.Recipe;
 import br.dev.drufontael.our_recipes_api.domain.model.Review;
-import br.dev.drufontael.our_recipes_api.domain.model.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -29,20 +27,20 @@ public class ReviewEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    public ReviewEntity(Review review) {
+    public ReviewEntity(Review review,RecipeEntity recipe) {
 
         this.id = review.getId();
         this.rating = review.getRating();
         this.comment = review.getComment();
         this.date = review.getDate();
-        this.recipe = new RecipeEntity(review.getRecipe());
-        this.user = new UserEntity(review.getUser());
+        this.recipe = recipe;
+        this.user = recipe.getAuthor();
     }
 
     public Review toDomain() {
         Review review = new Review(this.id, this.rating, this.comment, this.date);
-        review.setRecipe(this.recipe.toDomain());
-        review.setUser(this.user.toDomain());
+     //   review.setRecipe(this.recipe.toDomain());
+        if(this.user != null) review.setUser(this.user.toDomain());
         return review;
     }
 }

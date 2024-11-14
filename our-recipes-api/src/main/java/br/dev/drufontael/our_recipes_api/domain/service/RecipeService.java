@@ -257,7 +257,10 @@ public class RecipeService implements ManageRecipePort {
     }
 
     private void rebuildStepNumber(Recipe recipe){
-        recipe.getSteps().forEach(step -> step.setStepNumber(recipe.getSteps().indexOf(step)+1));
+        int stepNumber = 1;
+        for (Step s : recipe.getSteps()) {
+            s.setStepNumber(stepNumber++);
+        }
     }
 
 }

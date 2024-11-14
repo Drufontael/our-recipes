@@ -9,7 +9,7 @@ public class Review {
     private int rating;
     private String comment;
     private LocalDate date;
-    private Recipe recipe;
+  //  private Recipe recipe;
     private User user;
 
     public Review() {
@@ -56,13 +56,13 @@ public class Review {
         this.date = date;
     }
 
-    public Recipe getRecipe() {
+/*    public Recipe getRecipe() {
         return recipe;
     }
 
     public void setRecipe(Recipe recipe) {
         this.recipe = recipe;
-    }
+    }*/
 
     public User getUser() {
         return user;

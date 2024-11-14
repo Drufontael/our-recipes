@@ -14,7 +14,7 @@ public record RecipeDto(Long id,
                         Set<Tag> tags,
                         Set<RecipeIngredient> ingredients,
                         List<Step> steps,
-                        List<Review> reviews,
+                        List<ReviewDto> reviews,
                         Double rating,
                         String author) {
 
@@ -23,7 +23,7 @@ public record RecipeDto(Long id,
         recipe.getTags().addAll(tags);
         recipe.getIngredients().addAll(ingredients);
         recipe.getSteps().addAll(steps);
-        recipe.getReviews().addAll(reviews);
+        recipe.getReviews().addAll(reviews.stream().map(ReviewDto::toDomain).toList());
         return recipe;
     }
 
@@ -37,7 +37,7 @@ public record RecipeDto(Long id,
                              recipe.getTags(),
                              recipe.getIngredients(),
                              recipe.getSteps(),
-                             recipe.getReviews(),
+                             recipe.getReviews().stream().map(ReviewDto::fromDomain).toList(),
                              recipe.getRating(),
                              recipe.getAuthor().getUsername());
     }

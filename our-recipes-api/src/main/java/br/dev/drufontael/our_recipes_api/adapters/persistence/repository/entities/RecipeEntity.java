@@ -3,16 +3,15 @@ package br.dev.drufontael.our_recipes_api.adapters.persistence.repository.entiti
 import br.dev.drufontael.our_recipes_api.domain.model.*;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name="tb_recipe")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 public class RecipeEntity {
 
@@ -49,10 +48,10 @@ public class RecipeEntity {
         this.servingSize = recipe.getServingSize();
         this.preparationTime = recipe.getPreparationTime();
         this.difficulty = recipe.getDifficulty();
-        this.tags.addAll(recipe.getTags().stream().map(tag -> new RecipeTagEntity(tag, recipe)).toList());
+        this.tags.addAll(recipe.getTags().stream().map(tag -> new RecipeTagEntity(tag, this)).toList());
         this.ingredients.addAll(recipe.getIngredients().stream()
-                .map(recipeIngredient -> new RecipeIngredientEntity(recipeIngredient, recipe)).toList());
-        this.steps.addAll(recipe.getSteps().stream().map(step -> new StepEntity(step, recipe)).toList());
+                .map(recipeIngredient -> new RecipeIngredientEntity(recipeIngredient, this)).toList());
+        this.steps.addAll(recipe.getSteps().stream().map(step -> new StepEntity(step, this)).toList());
         this.reviews.addAll(recipe.getReviews().stream().map(ReviewEntity::new).toList());
         this.author = new UserEntity(recipe.getAuthor());
     }
@@ -65,5 +64,19 @@ public class RecipeEntity {
         recipe.getReviews().addAll(this.reviews.stream().map(ReviewEntity::toDomain).toList());
         recipe.setAuthor(this.author.toDomain());
         return recipe;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecipeEntity that = (RecipeEntity) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

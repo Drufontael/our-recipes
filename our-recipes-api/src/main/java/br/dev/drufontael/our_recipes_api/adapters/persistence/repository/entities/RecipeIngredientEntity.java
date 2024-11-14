@@ -1,14 +1,16 @@
 package br.dev.drufontael.our_recipes_api.adapters.persistence.repository.entities;
 
-import br.dev.drufontael.our_recipes_api.domain.model.Recipe;
 import br.dev.drufontael.our_recipes_api.domain.model.RecipeIngredient;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity(name = "tb_recipe_ingredient")
-@Data
+@Setter
+@Getter
 @NoArgsConstructor
 public class RecipeIngredientEntity {
 
@@ -31,8 +33,8 @@ public class RecipeIngredientEntity {
     @JoinColumn(name = "measurement_unit_id")
     private MeasurementUnitEntity measurementUnit;
 
-    public RecipeIngredientEntity(RecipeIngredient recipeIngredient, Recipe recipe) {
-        this.recipe = new RecipeEntity(recipe);
+    public RecipeIngredientEntity(RecipeIngredient recipeIngredient, RecipeEntity recipe) {
+        this.recipe = recipe;
         this.ingredient = new IngredientsEntity(recipeIngredient.getIngredient());
         this.quantity = recipeIngredient.getQuantity();
         this.measurementUnit = new MeasurementUnitEntity(recipeIngredient.getMeasurementUnit());
@@ -42,5 +44,19 @@ public class RecipeIngredientEntity {
 
     public RecipeIngredient toDomain() {
         return new RecipeIngredient(this.ingredient.toDomain(), this.quantity, this.measurementUnit.toDomain());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RecipeIngredientEntity that = (RecipeIngredientEntity) o;
+        return ingredient.equals(that.ingredient);
+    }
+
+    @Override
+    public int hashCode() {
+        return ingredient.hashCode();
     }
 }

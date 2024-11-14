@@ -29,10 +29,11 @@ public class IngredientControllerAdapter {
     }
 
     @GetMapping
-    public ResponseEntity<List<IngredientDto>> getAll(){
-        List<Ingredient> ingredients = manageIngredientPort.getAll();
-        return ResponseEntity.ok(ingredients.stream().map(ingredient ->
+    public ResponseEntity<List<IngredientDto>> getAll(@RequestParam(required = false) String name){
+        if(name != null) return ResponseEntity.ok(manageIngredientPort.findByName(name).stream().map(ingredient ->
             new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
+        else return ResponseEntity.ok(manageIngredientPort.getAll().stream().map(ingredient ->
+                new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
     }
 
     @GetMapping("/{id}")
@@ -41,11 +42,6 @@ public class IngredientControllerAdapter {
         return ResponseEntity.ok(new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription()));
     }
 
-    @GetMapping("/find/{name}")
-    public ResponseEntity<List<IngredientDto>> getByName(@PathVariable String name){
-        return ResponseEntity.ok(manageIngredientPort.findByName(name).stream().map(ingredient ->
-            new IngredientDto(ingredient.getId(),ingredient.getName(),ingredient.getDescription())).toList());
-    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id){

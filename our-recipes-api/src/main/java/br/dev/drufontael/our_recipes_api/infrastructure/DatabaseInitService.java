@@ -1,7 +1,7 @@
 package br.dev.drufontael.our_recipes_api.infrastructure;
 
-import br.dev.drufontael.our_recipes_api.domain.model.Role;
-import br.dev.drufontael.our_recipes_api.domain.model.User;
+import br.dev.drufontael.our_recipes_api.domain.model.*;
+import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageRecipePort;
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageUserPort;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +21,7 @@ public class DatabaseInitService {
 
     private final JdbcTemplate jdbcTemplate;
     private final ManageUserPort manageUserPort;
+    private final ManageRecipePort manageRecipePort;
     private final PasswordEncoder encoder;
 
     @Value("${script.sql.path}")
@@ -30,25 +31,82 @@ public class DatabaseInitService {
     @Value("${security.config.root.password}")
     private String securityConfigRootPassword;
 
-    public DatabaseInitService(JdbcTemplate jdbcTemplate, ManageUserPort manageUserPort, PasswordEncoder encoder) {
+    public DatabaseInitService(JdbcTemplate jdbcTemplate, ManageUserPort manageUserPort, PasswordEncoder encoder,
+                               ManageRecipePort manageRecipePort) {
+        this.manageRecipePort = manageRecipePort;
         this.jdbcTemplate = jdbcTemplate;
         this.manageUserPort = manageUserPort;
         this.encoder = encoder;
     }
 
     @PostConstruct
+    public void init() throws IOException {
+        runScript();
+        createRootUser();
+        createDefaultRecipes();
+    }
+
+
     public void runScript() throws IOException {
         String sql = new String(Files.readAllBytes(Paths.get(scriptPath)));
         jdbcTemplate.execute(sql);
     }
 
-    @PostConstruct
+
     public void createRootUser() {
         User root = new User();
         root.setUsername(securityConfigRoot);
         root.setPassword(securityConfigRootPassword);
         root=manageUserPort.register(root, encoder);
         manageUserPort.addRole(root, Role.ADMIN);
+    }
+
+
+    public void createDefaultRecipes() {
+        User testador=new User();
+        testador.setUsername("testador");
+        testador.setPassword("123456");
+        testador=manageUserPort.register(testador, encoder);
+
+        //Arroz branco
+        manageRecipePort.createRecipe("Arroz branco","Arroz branco normal", 2,15, Difficulty.BEGINNER, testador);
+        manageRecipePort.addTag(1L,new Tag("sem_gluten"),testador);
+        manageRecipePort.addTag(1L,new Tag("sem_lactose"),testador);
+        manageRecipePort.addTag(1L,new Tag("vegano"),testador);
+        manageRecipePort.addTag(1L,new Tag("acompanhamento"),testador);
+        manageRecipePort.addIngredient(1L,
+                new RecipeIngredient(new Ingredient(98L,"arroz",null),
+                        1,
+                        new MeasurementUnit(6L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(1L,
+                new RecipeIngredient(new Ingredient(38L,"água",null),
+                        2,
+                        new MeasurementUnit(6L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(1L,
+                new RecipeIngredient(new Ingredient(98L,"arroz",null),
+                        1,
+                        new MeasurementUnit(6L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(1L,
+                new RecipeIngredient(new Ingredient(11L,"cebola",null),
+                        0.5,
+                        new MeasurementUnit(5L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(1L,
+                new RecipeIngredient(new Ingredient(3L,"óleo vegetal",null),
+                        1,
+                        new MeasurementUnit(8L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addStep(1L,new Step(1,"Ferva a agua separadamente"),testador);
+        manageRecipePort.addStep(1L,new Step(2,"Refoque a cebola e o alho picados"),testador);
+        manageRecipePort.addStep(1L,new Step(3,"Junte o arroz aos ingredientes refogados e frite levemente"),testador);
+        manageRecipePort.addStep(1L,new Step(4,"Junte a agua fervente, tempere com sal e deixe cozinhar"),testador);
+
+
+
+
     }
 }
 

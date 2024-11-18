@@ -104,6 +104,32 @@ public class DatabaseInitService {
         manageRecipePort.addStep(1L,new Step(3,"Junte o arroz aos ingredientes refogados e frite levemente"),testador);
         manageRecipePort.addStep(1L,new Step(4,"Junte a agua fervente, tempere com sal e deixe cozinhar"),testador);
 
+        //Feijão
+        manageRecipePort.createRecipe("Feijão","Feijão normal",4,50, Difficulty.BEGINNER, testador);
+        manageRecipePort.addTag(2L,new Tag("sem_gluten"),testador);
+        manageRecipePort.addTag(2L,new Tag("sem_lactose"),testador);
+        manageRecipePort.addTag(2L,new Tag("vegano"),testador);
+        manageRecipePort.addTag(2L,new Tag("acompanhamento"),testador);
+        manageRecipePort.addIngredient(2L,
+                new RecipeIngredient(new Ingredient(99L,"feijão",null),
+                        1,
+                        new MeasurementUnit(6L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(2L,
+                new RecipeIngredient(new Ingredient(41L,"caldo de legumes",null),
+                        1,
+                        new MeasurementUnit(21L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addIngredient(2L,
+                new RecipeIngredient(new Ingredient(16L,"louro",null),
+                        1,
+                        new MeasurementUnit(5L,"xícara","xíc")),
+                testador);
+        manageRecipePort.addStep(2L,new Step(1,"Deixe o feijão de molho por 2 horas."),testador);
+        manageRecipePort.addStep(2L,new Step(2,"Escorra e transfira para uma panela de pressão."),testador);
+        manageRecipePort.addStep(2L,new Step(3,"Junte a água, o tempero pronto, o sal e o louro."),testador);
+        manageRecipePort.addStep(2L,new Step(4,"Deixe cozinhar, em fogo baixo, por 20 minutos após o início da fervura."),testador);
+
 
 
 

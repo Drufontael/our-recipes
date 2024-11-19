@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/api/recipes")
 @AllArgsConstructor
+@CrossOrigin("*")
 public class RecipeControllerAdapter {
 
     private final ManageRecipePort manageRecipePort;

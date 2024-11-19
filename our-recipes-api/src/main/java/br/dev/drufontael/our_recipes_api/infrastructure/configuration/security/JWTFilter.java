@@ -1,8 +1,12 @@
 package br.dev.drufontael.our_recipes_api.infrastructure.configuration.security;
 
+import br.dev.drufontael.our_recipes_api.infrastructure.exceptionHandler.ErrorResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.DecodingException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 public class JWTFilter extends OncePerRequestFilter {
@@ -39,14 +44,32 @@ public class JWTFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
             filterChain.doFilter(request,response);
-        } catch (ExpiredJwtException | MalformedJwtException | UnsupportedJwtException e){
-            e.printStackTrace();
-            response.setStatus(HttpStatus.FORBIDDEN.value());
-            return;
+        } catch (ExpiredJwtException e){
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
+            response.setContentType("application/json");
+
+
+            String jsonResponse = getErrorMessage(HttpStatus.UNAUTHORIZED.toString(), e.getMessage(), request);
+
+            response.getWriter().write(jsonResponse);
+
+        }catch (MalformedJwtException | DecodingException | UnsupportedJwtException e){
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
+            response.setContentType("application/json");
+
+            String jsonResponse = getErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage(), request);
+
+            response.getWriter().write(jsonResponse);
         }
     }
 
     private List<SimpleGrantedAuthority> authorities(List<String> roles) {
         return roles.stream().map(SimpleGrantedAuthority::new).toList();
+    }
+
+    private String getErrorMessage(String status, String message, HttpServletRequest request) throws JsonProcessingException {
+        ErrorResponse errorDetails= new ErrorResponse(new Date(), status, message, "uri=" + request.getRequestURI());
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.writeValueAsString(errorDetails);
     }
 }

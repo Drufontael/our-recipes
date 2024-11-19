@@ -1,7 +1,6 @@
 package br.dev.drufontael.our_recipes_api.infrastructure.exceptionHandler;
 
 import br.dev.drufontael.our_recipes_api.domain.exception.*;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -55,10 +54,4 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ResponseEntity<?> expiredJwtException(ExpiredJwtException ex,WebRequest request){
-        ErrorResponse errorDetails= new ErrorResponse(new Date(), HttpStatus.UNAUTHORIZED.toString(),
-                ex.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
-    }
 }

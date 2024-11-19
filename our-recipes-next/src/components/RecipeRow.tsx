@@ -1,10 +1,11 @@
+import { Tag } from "@/resource/recipe/tag.resource";
 import React from "react";
 
 interface RecipeRowProps {
     name?:string;
     description?:string;
     rating?:number;
-    tags?:string[]
+    tags?:Tag[]
 }
 
 export const RecipeRow: React.FC<RecipeRowProps> = ({ name, description, rating, tags }: RecipeRowProps) => {
@@ -24,7 +25,7 @@ export const RecipeRow: React.FC<RecipeRowProps> = ({ name, description, rating,
             key={index}
             className="px-2 py-1 text-sm text-gray-700 bg-gray-200 rounded-lg text-center"
           >
-            {tag}
+            {tag.name}
           </span>
         ))}
       </div>

@@ -16,6 +16,7 @@ public class Recipe implements Comparable<Recipe> {
     private List<Step> steps = new ArrayList<Step>();
     private List<Review> reviews = new ArrayList<Review>();
     private User author;
+    private double rating = 5.0;
 
     public Recipe() {
     }
@@ -119,7 +120,7 @@ public class Recipe implements Comparable<Recipe> {
     }
 
     public double getRating() {
-        return reviews.stream().mapToDouble(Review::getRating).average().orElse(0.0);
+        return reviews.stream().mapToDouble(Review::getRating).average().orElse(5.0);
     }
 
     public void addTag(Tag tag) {

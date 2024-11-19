@@ -56,7 +56,7 @@ public class RecipeService implements ManageRecipePort {
     @Override
     public List<Recipe> getRecipes() {
         List<Recipe> recipes = persistence.findAll();
-        Collections.sort(recipes);
+        //Collections.sort(recipes); //TODO veificar essa falha
         return recipes;
     }
 

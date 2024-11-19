@@ -44,23 +44,24 @@ public class JWTFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
             filterChain.doFilter(request,response);
-        } catch (ExpiredJwtException e){
-            response.setStatus(HttpStatus.UNAUTHORIZED.value());
-            response.setContentType("application/json");
-
-
-            String jsonResponse = getErrorMessage(HttpStatus.UNAUTHORIZED.toString(), e.getMessage(), request);
-
-            response.getWriter().write(jsonResponse);
-
-        }catch (MalformedJwtException | DecodingException | UnsupportedJwtException e){
-            response.setStatus(HttpStatus.BAD_REQUEST.value());
-            response.setContentType("application/json");
-
-            String jsonResponse = getErrorMessage(HttpStatus.BAD_REQUEST.toString(), e.getMessage(), request);
-
-            response.getWriter().write(jsonResponse);
+        } catch (ExpiredJwtException e) {
+            handleException(response, HttpStatus.UNAUTHORIZED, "JWT token expired", request, e);
+        } catch (MalformedJwtException | DecodingException | UnsupportedJwtException e) {
+            handleException(response, HttpStatus.BAD_REQUEST, "Invalid JWT token", request, e);
         }
+    }
+
+    private void handleException(HttpServletResponse response, HttpStatus status, String message, HttpServletRequest request, Exception e) throws IOException {
+        logger.error("JWT Error: ", e);
+
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+
+        String jsonResponse = getErrorMessage(status.toString(), message, request);
+        response.getWriter().write(jsonResponse);
+
+
+        return;
     }
 
     private List<SimpleGrantedAuthority> authorities(List<String> roles) {
@@ -68,7 +69,7 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private String getErrorMessage(String status, String message, HttpServletRequest request) throws JsonProcessingException {
-        ErrorResponse errorDetails= new ErrorResponse(new Date(), status, message, "uri=" + request.getRequestURI());
+        ErrorResponse errorDetails = new ErrorResponse(new Date(), status, message, "uri=" + request.getRequestURI());
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(errorDetails);
     }

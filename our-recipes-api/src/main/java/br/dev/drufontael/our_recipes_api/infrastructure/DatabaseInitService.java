@@ -130,6 +130,12 @@ public class DatabaseInitService {
         manageRecipePort.addStep(2L,new Step(3,"Junte a água, o tempero pronto, o sal e o louro."),testador);
         manageRecipePort.addStep(2L,new Step(4,"Deixe cozinhar, em fogo baixo, por 20 minutos após o início da fervura."),testador);
 
+        manageRecipePort.createRecipe("Sopa de Legumes","Sopa nutritiva de legumes.",4,30, Difficulty.BEGINNER, testador);
+
+        manageRecipePort.createRecipe("Sanduiche de Mortadela","Simples, gostoso e popular.",1,5, Difficulty.BEGINNER, testador);
+
+        manageRecipePort.createRecipe("Vitamina de Banana","Ideal para o dia a dia.",1,5, Difficulty.BEGINNER, testador);
+
 
 
 

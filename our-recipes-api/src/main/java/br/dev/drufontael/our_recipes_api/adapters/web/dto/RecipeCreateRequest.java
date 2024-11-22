@@ -6,5 +6,4 @@ public record RecipeCreateRequest(String name,
                                   int preparationTime,
                                   String difficulty) {
 
-
 }

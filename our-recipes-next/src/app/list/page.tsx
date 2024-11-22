@@ -11,11 +11,7 @@ export default function List(){
     const useService = useRecipeService();
     const [recipes,setRecipes] = useState<Recipe[]>([]);
 
-   // async function getRecipes() {
-     //   const result=await useService.getRecipes();
-       // setRecipes(result);
-        //console.table(result);
-   // }
+ 
 
     useEffect(() => {
         async function fetchRecipes() {
@@ -35,10 +31,7 @@ export default function List(){
         return (            
             <RecipeRow 
                 key={recipe.id}
-                name={recipe.name}
-                description={recipe.description}
-                rating={recipe.rating}
-                tags={recipe.tags}
+                recipe={recipe}        
                 />
         );
     }

@@ -27,6 +27,8 @@ public class WebSecurityConfig {
     private static final String[] WHITELIST = {
             "/",
             "/v1/api/users",
+            "/v1/api/users/login",
+            "/v1/api/users/register",
             "/swagger-ui.html",
             "/h2-console/**"
     };
@@ -53,13 +55,15 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000"); // Domínio permitido
-        configuration.addAllowedMethod("*"); // Métodos HTTP permitidos
-        configuration.addAllowedHeader("*"); // Cabeçalhos permitidos
-        configuration.setAllowCredentials(true); // Permitir credenciais (se necessário)
+        configuration.addAllowedOriginPattern("*");
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedHeader("*");
+        configuration.setAllowCredentials(true);
+
+        System.out.println("CORS configurado com as seguintes origens: " + configuration.getAllowedOrigins());
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas as rotas
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 

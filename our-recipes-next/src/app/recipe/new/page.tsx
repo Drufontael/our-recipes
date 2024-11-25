@@ -1,16 +1,31 @@
 'use client';
 
 import { Template } from "@/components";
+import { Recipe } from "@/resource/recipe/recipe.resource";
+import { useRecipeService } from "@/resource/recipe/recipe.service";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function CreateRecipe() {
   const [message, setMessage] = useState<string | null>(null);
+  const [name,setName] = useState<string>('');
+  const [description,setDescription] = useState<string>('');
+  const [servingSize,setServingSize] = useState<number>(0);
+  const [preparationTime,setPreparationTime]=useState<number>(0);
+  const recipeService = useRecipeService();
+  const router=useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
-    // Lógica para salvar a receita (ex.: envio para API)
-    console.log("Receita criada!");
-    setMessage("Receita criada com sucesso!");
+    try {
+      const recipe: Recipe = await recipeService.createRecipe(name, description, servingSize, preparationTime);
+      console.log("Receita criada!", recipe);
+      setMessage(`Receita "${recipe.name}" criada com sucesso!`);
+      router.push(`${recipe.id}/edit`);
+  } catch (error) {
+      console.error("Erro ao criar a receita:", error);
+      setMessage("Erro ao criar a receita. Tente novamente.");
+  }
   };
 
   return (
@@ -35,6 +50,7 @@ export default function CreateRecipe() {
                 name="name"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
+                onChange={(e)=>setName(e.target.value)}
               />
             </div>
 
@@ -52,6 +68,7 @@ export default function CreateRecipe() {
                 rows={4}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
+                onChange={(e)=>setDescription(e.target.value)}
               />
             </div>
 
@@ -69,6 +86,7 @@ export default function CreateRecipe() {
                 name="prepTime"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
+                onChange={(e)=>setPreparationTime(Number(e.target.value))}
               />
             </div>
 
@@ -86,6 +104,7 @@ export default function CreateRecipe() {
                 name="servings"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
                 required
+                onChange={(e)=>setServingSize(Number(e.target.value))}
               />
             </div>
 

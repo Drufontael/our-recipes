@@ -12,27 +12,35 @@ import br.dev.drufontael.our_recipes_api.infrastructure.configuration.security.J
 import br.dev.drufontael.our_recipes_api.infrastructure.configuration.security.JWTObject;
 import br.dev.drufontael.our_recipes_api.infrastructure.configuration.security.SecurityConfig;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/v1/api/users")
 @AllArgsConstructor
+@Slf4j
+//@CrossOrigin("*")
 public class UserControllerAdapter {
 
     private final ManageUserPort manageUserPort;
     private final PasswordEncoder encoder;
 
-    @PostMapping
+    @PostMapping("register")
     public ResponseEntity<UserResponse> register(@RequestBody UserRequest userRequest) {
-        Long id = manageUserPort.register(userRequest.toDomain(),encoder).getId();
-        return ResponseEntity.ok(new UserResponse(id,userRequest.username(),userRequest.email()));
+        log.info("Recebendo registro: {}", userRequest);
+        Long id = manageUserPort.register(userRequest.toDomain(), encoder).getId();
+        UserResponse userResponse = new UserResponse(id, userRequest.username(), userRequest.email());
+        log.info("Usuário criado com ID: {}", id);
+        ResponseEntity<UserResponse> response=ResponseEntity.created(URI.create("/v1/api/users/"+id)).body(userResponse);
+        log.info("Retornando response: {}", response);
+        return response;
     }
 
-    @GetMapping
+    @PostMapping("login")
     public ResponseEntity<Session> login(@RequestBody Login login) {
         User user = manageUserPort.findByUsername(login.username());
         if (!encoder.matches(login.password(), user.getPassword()))
@@ -45,40 +53,6 @@ public class UserControllerAdapter {
 
         return ResponseEntity.ok(new Session(user.getUsername(), token));
     }
-
-    @GetMapping("/yes")
-    public ResponseEntity<String> access() { //TODO: Remover este endpoint
-        // Recupera a autenticação do SecurityContext
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Verifica se a autenticação está presente e se é do tipo esperado
-        if (authentication != null && authentication.isAuthenticated()) {
-            // Obtém o nome do usuário a partir do token
-            String username = authentication.getName();
-            authentication.getAuthorities().forEach(System.out::println);
-            return ResponseEntity.ok("Access granted to user: " + username);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied");
-    }
-
-    @GetMapping("/no")
-    public ResponseEntity<String> dontAccess() { //TODO: Remover este endpoint
-        // Recupera a autenticação do SecurityContext
-        var authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        // Verifica se a autenticação está presente e se é do tipo esperado
-        if (authentication != null && authentication.isAuthenticated()) {
-            // Obtém o nome do usuário a partir do token
-            String username = authentication.getName();
-            authentication.getAuthorities().forEach(System.out::println);
-            return ResponseEntity.ok("Access granted to user: " + username);
-        }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Access denied");
-    }
-
-
 
 
 }

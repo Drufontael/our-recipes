@@ -16,6 +16,7 @@ export default function List(){
     useEffect(() => {
         async function fetchRecipes() {
             try {
+                console.log('abrindo as listas')
                 const result = await useService.getRecipes();
                 setRecipes(result);
                 console.table(result);

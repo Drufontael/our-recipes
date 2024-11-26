@@ -1,3 +1,4 @@
+import { GlobalProvider } from "@/context/GlobalContext";
 import React from "react";
 
 interface TemplateProps {
@@ -6,13 +7,15 @@ interface TemplateProps {
 
 export const Template: React.FC<TemplateProps> = (props: TemplateProps) => {
     return (
-        <div className="h-screen w-screen bg-cream flex flex-col">
-            <Header />
-            <main className="container mx-auto flex-1 mt-8 py-4 px-4">
-                {props.children}
-            </main>
-            <Footer />
-        </div>
+        <GlobalProvider>
+            <div className="h-screen w-screen bg-cream flex flex-col">
+                <Header />
+                <main className="container mx-auto flex-1 mt-8 py-4 px-4">
+                    {props.children}
+                </main>
+                <Footer />
+            </div>
+        </GlobalProvider>
     );
 };
 

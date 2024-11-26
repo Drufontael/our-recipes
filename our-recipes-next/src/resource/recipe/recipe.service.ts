@@ -1,6 +1,7 @@
 import { useUserService } from '@/resource/user/user.service';
 import { Recipe } from "./recipe.resource";
 import { RecipeSummary } from "./recipeSummary.resource";
+import { Tag } from './tag.resource';
 
 
 class RecipeService{
@@ -104,6 +105,68 @@ class RecipeService{
             console.error("Erro ao se comunicar com o servidor:", error);
             throw error;
         }  
+    }
+
+    async addTag(tag:Tag,id:any) {
+        try{
+            const headers: HeadersInit = {
+                'Content-Type': 'application/json',
+            };
+            if (this.token) {
+                headers['Authorization'] = `Bearer ${this.token}`;
+            }
+            const response=await fetch(
+                `${this.baseUrl}/${id}/tags`,
+                    {
+                        method:'POST',
+                        headers:headers,
+                        body:JSON.stringify(tag),
+                    }
+            )
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                console.error("Erro da API:", errorDetails);
+                throw new Error(
+                    `Erro adicionar tag: ${errorDetails.message} (Status: ${errorDetails.status})`
+                );
+            }
+            return await response.json();
+        }  catch (error) {
+            console.error("Erro ao se comunicar com o servidor:", error);
+            throw error;
+        }
+        
+    }
+
+    async deleteTag(tag:Tag,id:any) {
+        try{
+            const headers: HeadersInit = {
+                'Content-Type': 'application/json',
+            };
+            if (this.token) {
+                headers['Authorization'] = `Bearer ${this.token}`;
+            }
+            const response=await fetch(
+                `${this.baseUrl}/${id}/tags`,
+                    {
+                        method:'DELETE',
+                        headers:headers,
+                        body:JSON.stringify(tag),
+                    }
+            )
+            if (!response.ok) {
+                const errorDetails = await response.json();
+                console.error("Erro da API:", errorDetails);
+                throw new Error(
+                    `Erro adicionar tag: ${errorDetails.message} (Status: ${errorDetails.status})`
+                );
+            }
+            return await response.json();
+        }  catch (error) {
+            console.error("Erro ao se comunicar com o servidor:", error);
+            throw error;
+        }
+        
     }
 
 }

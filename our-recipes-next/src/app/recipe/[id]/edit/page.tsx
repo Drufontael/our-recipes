@@ -1,10 +1,24 @@
 'use client';
 
 import { Template } from "@/components";
+import { IngredientManager } from "@/components/IngredientManager";
+import { StepsManager } from "@/components/StepsManager";
+import { TagManager } from "@/components/TagManage";
+import { useGlobalContext } from "@/context/GlobalContext";
+import { Ingredient } from "@/resource/recipe/ingredient.resource";
 import { Recipe } from "@/resource/recipe/recipe.resource";
-import React, { useState } from "react";
+import { useRecipeService } from "@/resource/recipe/recipe.service";
+import { RecipeIngredient } from "@/resource/recipe/recipeIngredient.resource";
+import { Step } from "@/resource/recipe/step.resource";
+import { Tag } from "@/resource/recipe/tag.resource";
+import { useParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function EditRecipe() {
+
+    const { id }=useParams();    
+
+    const recipeService=useRecipeService();
     const [recipe, setRecipe] = useState<Recipe>({
         id: 1,
         name: "Nome da Receita",
@@ -16,9 +30,27 @@ export default function EditRecipe() {
         steps: [],
     });
 
-    const [newTag, setNewTag] = useState("");
-    const [newIngredient, setNewIngredient] = useState("");
-    const [newStep, setNewStep] = useState("");
+    const [newTag, setNewTag] = useState<Tag>({name:''});
+    const [newIngredient, setNewIngredient] = useState<RecipeIngredient>({ingredient:{name:''}});
+    const [newStep, setNewStep] = useState<Step>({description:''});
+
+    
+    async function fetchRecipe() {
+        try {
+            const result=await recipeService.getRecipeById(id);
+            if(result){
+                setRecipe(result);                    
+            }
+        } catch (error) {
+            console.error('Failed to fetch recipes:', error);
+        }
+    }
+    
+    
+    useEffect(() => {       
+
+        fetchRecipe();
+    }, []); 
 
     // Atualizar valores dos inputs controlados
     function handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -26,38 +58,38 @@ export default function EditRecipe() {
         setRecipe((prev) => ({ ...prev, [name]: value }));
     }
 
-    // Adicionar uma nova tag
-    function handleAddTag() {
-        setRecipe((prev) => ({
-            ...prev,
-            tags: [...(prev.tags || []), { name: newTag }],
-        }));
-        setNewTag("");
+    async function handleOnAddTag(tag:Tag) {
+        const sucess=await recipeService.addTag(tag,id);
+        if(sucess){
+            fetchRecipe();
+        }
+
     }
 
-    // Adicionar um novo ingrediente
-    function handleAddIngredient() {
-        setRecipe((prev) => ({
-            ...prev,
-            ingredients: [
-                ...(prev.ingredients || []),
-                { ingredient: { name: newIngredient }, quantity: 1, measurementUnit: { abbreviation: "un" } },
-            ],
-        }));
-        setNewIngredient("");
+    async function handleOnDeleteTag(tag:Tag){
+        const sucess=await recipeService.deleteTag(tag,id)
+        if(sucess){
+            fetchRecipe();
+        }
     }
 
-    // Adicionar uma nova etapa
-    function handleAddStep() {
-        setRecipe((prev) => ({
-            ...prev,
-            steps: [
-                ...(prev.steps || []),
-                { stepNumber: (prev.steps?.length || 0) + 1, description: newStep },
-            ],
-        }));
-        setNewStep("");
+    async function handleOnaddIngredient(ingredient:RecipeIngredient) {
+        
     }
+
+    async function handleOnDeleteIngredient(ingredient:RecipeIngredient) {
+        
+    }
+
+    async function handleOnAddStep(step:Step) {
+        
+    }
+
+    async function handleOnDeleteStep(step:Step) {
+        
+    }
+
+
 
     // Renderização das listas
     function renderTags() {
@@ -84,13 +116,16 @@ export default function EditRecipe() {
         ));
     }
 
+
     return (
         <Template>
             <div className="min-h-screen bg-cream p-8">
-                <div className="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-                    <h1 className="text-3xl font-bold text-orange-600 mb-6 text-center">Editar Receita</h1>
-                    <form className="space-y-6">
-                        {/* Nome */}
+                <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                    <h1 className="text-4xl font-bold text-orange-600 mb-6 text-center">
+                        Editar Receita
+                    </h1>
+                    <form className="space-y-8">
+                        {/* Nome e descrição */}
                         <div>
                             <label htmlFor="name" className="block text-brown-600 font-medium mb-2">
                                 Nome da Receita:
@@ -100,11 +135,9 @@ export default function EditRecipe() {
                                 name="name"
                                 value={recipe.name}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
                             />
                         </div>
-
-                        {/* Descrição */}
                         <div>
                             <label htmlFor="description" className="block text-brown-600 font-medium mb-2">
                                 Descrição:
@@ -113,7 +146,7 @@ export default function EditRecipe() {
                                 name="description"
                                 value={recipe.description}
                                 onChange={handleInputChange}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
                                 rows={4}
                             ></textarea>
                         </div>
@@ -129,7 +162,7 @@ export default function EditRecipe() {
                                     name="preparationTime"
                                     value={recipe.preparationTime}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
                                 />
                             </div>
                             <div>
@@ -141,81 +174,41 @@ export default function EditRecipe() {
                                     name="servingSize"
                                     value={recipe.servingSize}
                                     onChange={handleInputChange}
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-orange-500"
                                 />
                             </div>
                         </div>
 
-                        {/* Tags */}
+                        {/* Gerenciadores */}
                         <div>
-                            <label className="block text-brown-600 font-medium mb-2">Tags:</label>
-                            <div className="flex items-center space-x-4 mb-4">
-                                {renderTags()}
-                                <input
-                                    type="text"
-                                    value={newTag}
-                                    onChange={(e) => setNewTag(e.target.value)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                                    placeholder="Nova tag"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddTag}
-                                    className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
-                                >
-                                    Adicionar
-                                </button>
-                            </div>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Tags</h2>
+                            <TagManager
+                                tags={recipe.tags || []}
+                                onAddTag={handleOnAddTag}
+                                onDeleteTag={handleOnDeleteTag}
+                            />
                         </div>
-
-                        {/* Ingredientes */}
                         <div>
-                            <label className="block text-brown-600 font-medium mb-2">Ingredientes:</label>
-                            <ul className="list-disc pl-5 space-y-2">{renderIngredients()}</ul>
-                            <div className="flex items-center space-x-4 mt-4">
-                                <input
-                                    type="text"
-                                    value={newIngredient}
-                                    onChange={(e) => setNewIngredient(e.target.value)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                                    placeholder="Novo ingrediente"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddIngredient}
-                                    className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
-                                >
-                                    Adicionar
-                                </button>
-                            </div>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Ingredientes</h2>
+                            <IngredientManager
+                                ingredients={recipe.ingredients || []}
+                                onAdd={() => {}}
+                                onDelete={() => {}}
+                            />
                         </div>
-
-                        {/* Etapas */}
                         <div>
-                            <label className="block text-brown-600 font-medium mb-2">Etapas:</label>
-                            <ol className="list-decimal pl-5 space-y-2">{renderSteps()}</ol>
-                            <div className="flex items-center space-x-4 mt-4">
-                                <input
-                                    type="text"
-                                    value={newStep}
-                                    onChange={(e) => setNewStep(e.target.value)}
-                                    className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500"
-                                    placeholder="Nova etapa"
-                                />
-                                <button
-                                    type="button"
-                                    onClick={handleAddStep}
-                                    className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600"
-                                >
-                                    Adicionar
-                                </button>
-                            </div>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Passos</h2>
+                            <StepsManager
+                                steps={recipe.steps || []}
+                                onAdd={() => {}}
+                                onDelete={() => {}}
+                            />
                         </div>
 
                         {/* Botão de salvar */}
                         <button
                             type="submit"
-                            className="w-full bg-green-500 text-white py-2 px-4 rounded-lg font-bold hover:bg-green-600"
+                            className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 shadow-md"
                         >
                             Salvar Alterações
                         </button>

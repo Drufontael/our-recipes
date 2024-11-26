@@ -52,7 +52,7 @@ export default function RecipePage() {
     
     <Template>
       <div className="bg-cream min-h-screen">
-        {/* Header */}
+        
         <header className="bg-orange-200 py-8 px-4 text-center shadow-lg">
           <h1 className="text-4xl font-title text-orange-600 mb-4">
             {recipe?.name}
@@ -73,7 +73,9 @@ export default function RecipePage() {
               <span className="block text-lg font-semibold text-brown-700">
                 Porções
               </span>
-              <span className="text-sm text-gray-600">{recipe?.servingSize}</span>
+              <span className="text-sm text-gray-600">
+                {recipe?.servingSize}
+              </span>
             </div>
           </div>
           <div className="mt-4 flex justify-center items-center flex-wrap gap-4">

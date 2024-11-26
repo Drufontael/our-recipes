@@ -29,6 +29,9 @@ public class WebSecurityConfig {
             "/v1/api/users",
             "/v1/api/users/login",
             "/v1/api/users/register",
+            "/v1/api/ingredients",
+            "/v1/api/measurement-units",
+            "/v1/api/tags",
             "/swagger-ui.html",
             "/h2-console/**"
     };

@@ -27,6 +27,15 @@ class UserService{
                 },
                 body: JSON.stringify({ username, email, password }),
             });
+
+            if (!response.ok) {
+                console.error('Erro ao fazer login:', response.statusText);
+                return false;
+            }
+
+            const data = await response.json();
+
+            return true;
     
             
         } catch (error) {

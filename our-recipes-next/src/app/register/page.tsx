@@ -1,7 +1,6 @@
 'use client'
 
 import { Template } from "@/components";
-import { useRegisterService } from "@/resource/user/register.service";
 import { useUserService } from "@/resource/user/user.service";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -14,19 +13,24 @@ export default function RegisterPage() {
     const [passConfirm,setPassConfirm]=useState<string | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const userService=useUserService();
-    const registerService=useRegisterService();
     const router=useRouter();
 
-    async function handlerRegister(){
+    async function handlerRegister(event:React.FormEvent){
+        event.preventDefault();        
         if(password!==passConfirm){
             setErrorMessage("As senhas não coincidem!");
             return;
         }
         const sucess=await userService.register(username,email,password);
-        console.log('Indo para lista')
         if(sucess){
-            console.log('Register OK'); 
-            //router.push('/list'); 
+            newLogin();
+        }
+    }
+
+    async function newLogin(){        
+        const sucess=await userService.login(username,password);
+        if(sucess){
+            router.push('/list'); 
         } else {
             setErrorMessage("Erro ao realizar o cadastro. Tente novamente.");
         }
@@ -44,24 +48,28 @@ export default function RegisterPage() {
                     onSubmit={handlerRegister}
                     >
                         <input
+                            id='user'
                             type="text"
                             placeholder="Usuário"
                             className="w-full px-4 py-2 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             onChange={(e)=>setUsername(e.target.value)}
                         />
                         <input
+                            id='email'
                             type="email"
                             placeholder="Email"
                             className="w-full px-4 py-2 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             onChange={(e)=>setEmail(e.target.value)}
                         />
                         <input
+                            id='password'
                             type="password"
                             placeholder="Senha"
                             className="w-full px-4 py-2 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
                             onChange={(e)=>setPassword(e.target.value)}
                         />
                         <input
+                            id='passConfirm'
                             type="password"
                             placeholder="Confirme a senha"
                             className="w-full px-4 py-2 border border-brown-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"

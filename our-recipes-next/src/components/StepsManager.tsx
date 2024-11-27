@@ -45,18 +45,18 @@ export const StepsManager: React.FC<StepsManagerProps> = ({
             {/* Formulário para adicionar passos */}
             <form
                 onSubmit={handleOnAdd}
-                className="flex items-center space-x-4"
+                className="space-y-4"
             >
-                <label htmlFor="new-step" className="sr-only">
+                <label htmlFor="new-step" className="block text-brown-500 font-medium">
                     Novo passo
                 </label>
-                <input
-                    type="text"
+                <textarea
                     id="new-step"
                     value={stepText}
                     onChange={(e) => setStepText(e.target.value)}
                     placeholder="Digite o passo"
-                    className="flex-1 border border-brown-400 bg-white rounded-lg p-2 shadow-sm focus:ring-2 focus:ring-brown-500"
+                    className="w-full border border-brown-400 bg-white rounded-lg p-3 shadow-sm focus:ring-2 focus:ring-brown-500"
+                    rows={4} // Define o número de linhas do textarea
                 />
                 <button
                     type="submit"
@@ -68,3 +68,4 @@ export const StepsManager: React.FC<StepsManagerProps> = ({
         </div>
     );
 };
+

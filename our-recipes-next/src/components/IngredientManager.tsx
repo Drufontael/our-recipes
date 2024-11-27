@@ -15,11 +15,34 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
     onDelete,
     onAdd,
 }) => {
-    const { ingredients: loadIngredients } = useGlobalContext();
-    const { measurementUnits: loadMeasurementUnits } = useGlobalContext();
-    const [newIngredient, setNewIngredient] = useState<Ingredient>({ name: '' });
-    const [newMeasurementUnit, setNewMeasurementunit] = useState<MeasurementUnit>({ name: '' });
+    const { ingredients: loadIngredients, measurementUnits: loadMeasurementUnits } = useGlobalContext();
+    const [newIngredient, setNewIngredient] = useState<string>('');
+    const [newMeasurementUnit, setNewMeasurementunit] = useState<string>('');
     const [newQuantity, setNewQuantity] = useState<number>(0);
+   
+
+    function handleOnAdd(event: React.FormEvent) {
+        event.preventDefault();
+
+        const selectedIngredient = loadIngredients.find((ingredient) => ingredient.name === newIngredient);
+        const selectedUnit = loadMeasurementUnits.find((unit) => unit.name === newMeasurementUnit);
+    
+        if (!selectedIngredient || !selectedUnit) {
+            alert("Selecione um ingrediente e uma unidade de medida válidos.");
+            return;
+        }
+        const newRecipeIngredient: RecipeIngredient = {
+            ingredient: selectedIngredient,
+            quantity: newQuantity,
+            measurementUnit: selectedUnit,
+        };
+        onAdd(newRecipeIngredient);
+
+        setNewIngredient('');
+        setNewMeasurementunit('');
+        setNewQuantity(0);
+    }
+    
 
     return (
         <div className="bg-beige p-6 rounded-lg shadow-md">
@@ -50,10 +73,10 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                 </ul>
             </div>
 
-            {/* Add Ingredient Form */}
+
             <div className="bg-cream p-6 rounded-lg shadow-sm">
                 <form className="space-y-4">
-                    {/* Ingredient Select */}
+
                     <div>
                         <label htmlFor="ingredient-select" className="block text-brown-500 text-sm font-medium mb-1">
                             Ingrediente
@@ -61,7 +84,10 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                         <select
                             id="ingredient-select"
                             className="w-full border border-brown-300 rounded-md p-2"
+                            value={newIngredient}
+                            onChange={(e)=>setNewIngredient(e.target.value)}
                         >
+                            <option value="" disabled>Selecione um ingrediente</option>
                             {loadIngredients.map((ingredient, index) => (
                                 <option key={index} value={ingredient.name}>
                                     {ingredient.name}
@@ -70,7 +96,7 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                         </select>
                     </div>
 
-                    {/* Quantity Input */}
+
                     <div>
                         <label htmlFor="quantity" className="block text-brown-500 text-sm font-medium mb-1">
                             Quantidade
@@ -84,7 +110,7 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                         />
                     </div>
 
-                    {/* Measurement Unit Select */}
+
                     <div>
                         <label htmlFor="unit-select" className="block text-brown-500 text-sm font-medium mb-1">
                             Unidade de Medida
@@ -92,7 +118,10 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                         <select
                             id="unit-select"
                             className="w-full border border-brown-300 rounded-md p-2"
+                            onChange={(e)=>setNewMeasurementunit(e.target.value)}
+                            value={newMeasurementUnit}
                         >
+                            <option value="" disabled>Selecione uma unidade</option>
                             {loadMeasurementUnits.map((unit, index) => (
                                 <option key={index} value={unit.name}>
                                     {unit.name}
@@ -101,18 +130,11 @@ export const IngredientManager: React.FC<IngredientManagerProps> = ({
                         </select>
                     </div>
 
-                    {/* Add Button */}
+
                     <div className="text-right">
                         <button
                             className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md font-medium"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                onAdd({
-                                    ingredient: newIngredient,
-                                    quantity: newQuantity,
-                                    measurementUnit: newMeasurementUnit,
-                                });
-                            }}
+                            onClick={handleOnAdd}
                         >
                             Adicionar
                         </button>

@@ -14,6 +14,7 @@ import br.dev.drufontael.our_recipes_api.infrastructure.configuration.security.S
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,8 +52,12 @@ public class UserControllerAdapter {
         jwtObject.setRoles(user.getRoles().stream().map(Role::getRole).toList());
         String token = JWTCreator.create(SecurityConfig.PREFIX, SecurityConfig.KEY,jwtObject);
 
+
+
         return ResponseEntity.ok(new Session(user.getUsername(), token));
     }
+
+
 
 
 }

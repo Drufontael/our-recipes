@@ -8,6 +8,7 @@ public record Filters(Map<String,Object> filters) {
         Map<String, List<String>> resultMap = new HashMap<>();
 
         for (Map.Entry<String, Object> entry : filters.entrySet()) {
+            if(entry.getValue() == null)  continue;
             String key = entry.getKey();
             Object value = entry.getValue();
 

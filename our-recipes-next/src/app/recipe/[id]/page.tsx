@@ -1,35 +1,39 @@
 'use client'
 import { Template } from "@/components";
+import { ReviewCard } from "@/components/ReviewCard";
 import ReviewModal from "@/components/ReviewModal";
 import { Recipe } from "@/resource/recipe/recipe.resource";
 import { useRecipeService } from "@/resource/recipe/recipe.service";
+import { Review } from "@/resource/recipe/review.resource";
+import { useUserService } from "@/resource/user/user.service";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function RecipePage() {
 
-  const useService = useRecipeService();
-  const [recipe,setRecipe] = useState<Recipe>();
-
+  const recipeService = useRecipeService();
+  const userService = useUserService()  
   const { id }=useParams()
-  console.log(id)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recipe,setRecipe] = useState<Recipe>();
+  const [review,setReview] = useState<Review>();
+  const [author,setAuthor] = useState<string>();
+
+
+  async function fetchRecipe() {
+      try {
+          const result = await recipeService.getRecipeById(id);
+          setRecipe(result);
+          setAuthor(userService.getUser()||'');
+      } catch (error) {
+          console.error('Failed to fetch recipes:', error);
+      }
+  }
 
   useEffect(() => {
-    async function fetchRecipe() {
-        try {
-            const result = await useService.getRecipeById(id);
-            setRecipe(result);
-            console.table(result);
-        } catch (error) {
-            console.error('Failed to fetch recipes:', error);
-        }
-    }
-
     fetchRecipe();
-}, []);
+  }, []);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reviews, setReviews] = useState(recipe?.reviews);
 
 
   const handleBack = () => {
@@ -40,11 +44,19 @@ export default function RecipePage() {
     setIsModalOpen(true);
   };
 
-  const handleSubmitReview = (comment: string, rating: number) => {
-//    const newReview = { comment, rating };
-  //  setReviews((prevReviews) => [...prevReviews, newReview]);
-    //setIsModalOpen(false); // Fecha o modal após submissão
+  const handleSubmitReview = async(newReview:Review) => {
+    const sucess=newReview.id?await recipeService.updateReview(newReview,id):await recipeService.addReview(newReview,id);
+    if(sucess){
+      fetchRecipe();
+      setReview({})
+      setIsModalOpen(false);
+    }
   };
+
+  const handleEditReview = (editReview:Review)=>{
+    setReview(editReview);
+    setIsModalOpen(true);
+  }
   
   
 
@@ -80,7 +92,7 @@ export default function RecipePage() {
           </div>
           <div className="mt-4 flex justify-center items-center flex-wrap gap-4">
             <span className="block text-green-600 font-semibold text-lg">
-              Classificação: {recipe?.rating} ★
+              Classificação: {recipe?.rating?.toFixed(1)} ★
             </span>
             <div className="flex gap-2">
               {recipe?.tags?.map((tag, index) => (
@@ -103,7 +115,16 @@ export default function RecipePage() {
             </h2>
             <ul className="list-disc list-inside text-brown-700 space-y-2">
               {recipe?.ingredients?.map((ingredient, index) => (
-                <li key={index}>{ingredient?.ingredient?.name}</li>
+                <div key={index} className="flex">
+                  <li>
+                    <span>
+                      {ingredient?.ingredient?.name} 
+                    </span>
+                    <span className="ml-4">
+                      {ingredient.quantity} {ingredient.measurementUnit?.abbreviation}
+                    </span>
+                  </li>
+                </div>
               ))}
             </ul>
           </div>
@@ -123,15 +144,17 @@ export default function RecipePage() {
             Avaliações
           </h2>
           <ul className="container mx-auto space-y-4">
-            {reviews?.map(review=>(
+            {recipe?.reviews?.map(review=>(
               <li
                 key={review.id}
                 className="bg-white p-4 rounded-lg shadow-md text-brown-700"
               >
-                <p className="mb-2">{review.comment}</p>
-                <span className="text-orange-500">
-                {review.rating && review.rating > 0 ? `★`.repeat(review.rating) : ''}
-                  </span>
+                <ReviewCard
+                  review={review}
+                  author={author||""}
+                  onEdit={handleEditReview}
+                  onDelete={()=>{}}
+                />
               </li>
 
             ))}
@@ -160,6 +183,7 @@ export default function RecipePage() {
       isOpen={isModalOpen}
       onClose={() => setIsModalOpen(false)}
       onSubmit={handleSubmitReview}
+      review={review}
       />
     </Template>    
   );

@@ -34,7 +34,7 @@ public class ReviewEntity {
         this.comment = review.getComment();
         this.date = review.getDate();
         this.recipe = recipe;
-        this.user = recipe.getAuthor();
+        this.user = new UserEntity(review.getUser());
     }
 
     public Review toDomain() {

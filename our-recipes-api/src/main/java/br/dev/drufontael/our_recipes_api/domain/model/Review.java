@@ -20,7 +20,7 @@ public class Review {
         if(rating < 1 || rating > 5) throw new RattingOutOfRangeException();
         this.rating = rating;
         this.comment = comment;
-        this.date = date;
+        this.date = date==null?LocalDate.now():date;
     }
 
     public Long getId() {

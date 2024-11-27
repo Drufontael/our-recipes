@@ -1,54 +1,93 @@
-'use client'
+'use client';
 
-import {Template,RecipeRow} from '@/components'
+import { Template, RecipeRow } from '@/components';
+import FilterModal from '@/components/FilterModal';
+import { Ingredient } from '@/resource/recipe/ingredient.resource';
 import { Recipe } from '@/resource/recipe/recipe.resource';
-import { useRecipeService } from '@/resource/recipe/recipe.service'
+import { useRecipeService } from '@/resource/recipe/recipe.service';
 import { RecipeSummary } from '@/resource/recipe/recipeSummary.resource';
+import { Tag } from '@/resource/recipe/tag.resource';
+import { useUserService } from '@/resource/user/user.service';
 import { useEffect, useState } from 'react';
 
-export default function List(){
+interface Filter {
+  user: boolean;
+  tags: Tag[];
+  ingredients: Ingredient[];
+  status: boolean;
+}
 
-    const useService = useRecipeService();
-    const [recipes,setRecipes] = useState<Recipe[]>([]);
+export default function List() {
+  const recipeService = useRecipeService();
+  const userService = useUserService();
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
+  const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
+  const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
+  const [filter, setFilter] = useState({});
 
- 
+  async function fetchRecipes() {
+    try {
+      const result = isFilterActive
+        ? await recipeService.getFilteredRecipes(filter)
+        : await recipeService.getRecipes();
+      setRecipes(result);
+    } catch (error) {
+      console.error('Failed to fetch recipes:', error);
+    }
+  }
 
-    useEffect(() => {
-        async function fetchRecipes() {
-            try {
-                console.log('abrindo as listas')
-                const result = await useService.getRecipes();
-                setRecipes(result);
-                console.table(result);
-            } catch (error) {
-                console.error('Failed to fetch recipes:', error);
-            }
-        }
+  useEffect(() => {
+    fetchRecipes();
+  }, [isFilterActive, filter]);
 
-        fetchRecipes();
-    }, []); 
+  function handleFilterRecipes(): void {
+    setIsFilterOpen(true);
+  }
 
-    function fillRow(recipe:RecipeSummary){
-        return (            
-            <RecipeRow 
-                key={recipe.id}
-                recipe={recipe}        
-                />
-        );
+  const handleOnSubmitFilter = (newFilter: Filter) => {
+    if (newFilter.status) {
+      const user = userService.getUser();
+      const updatedFilter = {        
+        author: newFilter.user ? user : null,
+        tags: newFilter.tags.map((tag) => tag.name),
+        ingredients: newFilter.ingredients.map((ingredient) => ingredient.name),
+      };
+      console.log(updatedFilter)
+      
+
+      setFilter(updatedFilter);
+      setIsFilterActive(true);
+    } else {
+      setIsFilterActive(false);
+      setFilter({});
     }
 
-    function showRows(){
-        return recipes.map(fillRow);
-    }
+    setIsFilterOpen(false); // Fecha o modal
+  };
 
+  function fillRow(recipe: RecipeSummary) {
+    return <RecipeRow key={recipe.id} recipe={recipe} />;
+  }
 
-    return(
-        <Template>
-            <section>
-                {showRows()}
-            </section>
-        </Template>
+  function showRows() {
+    return recipes.map(fillRow);
+  }
 
-    )
-
+  return (
+    <Template
+      headerActions={{
+        filterRecipes: {
+          isActive: isFilterActive, // Reflete se há filtros ativos
+          action: handleFilterRecipes,
+        },
+      }}
+    >
+      <section>{showRows()}</section>
+      <FilterModal
+        isOpen={isFilterOpen}
+        onSubmit={handleOnSubmitFilter} // Passa a função para aplicar filtros
+        onClose={() => setIsFilterOpen(false)} // Fecha o modal ao clicar em "Cancelar"
+      />
+    </Template>
+  );
 }

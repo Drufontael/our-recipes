@@ -7,6 +7,7 @@ import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageMeasurementUnitPo
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageRecipePort;
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageUserPort;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("v1/api/recipes")
 @AllArgsConstructor
+@Slf4j
 @CrossOrigin("*")
 public class RecipeControllerAdapter {
 
@@ -44,7 +46,7 @@ public class RecipeControllerAdapter {
         return ResponseEntity.ok(recipes.stream().map(RecipeSummaryResponse::fromDomain).toList());
     }
 
-    @GetMapping("/filter")
+    @PostMapping("/filter")
     public ResponseEntity<List<RecipeSummaryResponse>> filter(@RequestBody Filters filters) {
         List<Recipe> recipes = manageRecipePort.getRecipes(filters.getFilters());
         return ResponseEntity.ok(recipes.stream().map(RecipeSummaryResponse::fromDomain).toList());
@@ -104,8 +106,8 @@ public class RecipeControllerAdapter {
 
 
     @PostMapping("/{id}/steps")
-    public ResponseEntity<RecipeDto> addStep(@PathVariable Long id, @RequestBody String request) {
-        manageRecipePort.addStep(id, new Step(0,request), getAuthenticatedUser());
+    public ResponseEntity<RecipeDto> addStep(@PathVariable Long id, @RequestBody StepDto request) {
+        manageRecipePort.addStep(id, new Step(request.stepNumber(), request.description()), getAuthenticatedUser());
         Recipe recipe = manageRecipePort.getRecipe(id);
         return ResponseEntity.ok(RecipeDto.fromDomain(recipe));
     }
@@ -146,6 +148,8 @@ public class RecipeControllerAdapter {
     @PostMapping("/{id}/reviews")
     public ResponseEntity<RecipeDto> addReview(@PathVariable Long id, @RequestBody ReviewDto request) {
         manageRecipePort.addReview(id, request.toDomain(), getAuthenticatedUser());
+        log.info("Recebendo avaliação: {}", request);
+        log.info("Usuário autenticado: {}", getAuthenticatedUser().getUsername());
         Recipe recipe = manageRecipePort.getRecipe(id);
         return ResponseEntity.ok(RecipeDto.fromDomain(recipe));
     }

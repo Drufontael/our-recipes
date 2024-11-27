@@ -1,22 +1,18 @@
 'use client';
 
-import { Template } from "@/components";
-import { IngredientManager } from "@/components/IngredientManager";
-import { StepsManager } from "@/components/StepsManager";
-import { TagManager } from "@/components/TagManage";
-import { useGlobalContext } from "@/context/GlobalContext";
-import { Ingredient } from "@/resource/recipe/ingredient.resource";
+import { Template,IngredientManager,StepsManager,TagManager  } from "@/components";
 import { Recipe } from "@/resource/recipe/recipe.resource";
 import { useRecipeService } from "@/resource/recipe/recipe.service";
 import { RecipeIngredient } from "@/resource/recipe/recipeIngredient.resource";
 import { Step } from "@/resource/recipe/step.resource";
 import { Tag } from "@/resource/recipe/tag.resource";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 
 export default function EditRecipe() {
 
-    const { id }=useParams();    
+    const { id }=useParams();
+    const router =useRouter();    
 
     const recipeService=useRecipeService();
     const [recipe, setRecipe] = useState<Recipe>({
@@ -30,9 +26,7 @@ export default function EditRecipe() {
         steps: [],
     });
 
-    const [newTag, setNewTag] = useState<Tag>({name:''});
-    const [newIngredient, setNewIngredient] = useState<RecipeIngredient>({ingredient:{name:''}});
-    const [newStep, setNewStep] = useState<Step>({description:''});
+
 
     
     async function fetchRecipe() {
@@ -58,6 +52,14 @@ export default function EditRecipe() {
         setRecipe((prev) => ({ ...prev, [name]: value }));
     }
 
+    async function handleSubmit(event:React.FormEvent) {
+        event.preventDefault();
+        const sucess=await recipeService.updateRecipe(id,recipe);
+        if(sucess){
+            router.push(`../${id}`);
+        }        
+    }
+
     async function handleOnAddTag(tag:Tag) {
         const sucess=await recipeService.addTag(tag,id);
         if(sucess){
@@ -74,47 +76,37 @@ export default function EditRecipe() {
     }
 
     async function handleOnaddIngredient(ingredient:RecipeIngredient) {
-        
+        const sucess=await recipeService.addIngredient(ingredient,id);
+        if(sucess){
+            fetchRecipe();
+        }        
     }
 
     async function handleOnDeleteIngredient(ingredient:RecipeIngredient) {
+        const sucess=await recipeService.deleteIngredient(ingredient,id);
+        if(sucess){
+            fetchRecipe();
+        }  
         
     }
 
     async function handleOnAddStep(step:Step) {
+        const sucess=await recipeService.addStep(step,id);
+        if(sucess){
+            fetchRecipe();
+        }  
         
     }
 
     async function handleOnDeleteStep(step:Step) {
-        
+        const sucess=await recipeService.deleteStep(step,id);
+        if(sucess){
+            fetchRecipe();
+        }          
     }
 
 
 
-    // Renderização das listas
-    function renderTags() {
-        return recipe.tags?.map((tag, index) => (
-            <span key={index} className="bg-orange-200 text-orange-700 px-2 py-1 rounded-full text-sm mr-2">
-                {tag.name}
-            </span>
-        ));
-    }
-
-    function renderIngredients() {
-        return recipe.ingredients?.map((ingredient, index) => (
-            <li key={index} className="text-brown-600">
-                {ingredient.ingredient?.name} {ingredient.quantity} {ingredient.measurementUnit?.abbreviation}
-            </li>
-        ));
-    }
-
-    function renderSteps() {
-        return recipe.steps?.map((step) => (
-            <li key={step.stepNumber} className="text-brown-600">
-                {step.stepNumber}. {step.description}
-            </li>
-        ));
-    }
 
 
     return (
@@ -124,8 +116,8 @@ export default function EditRecipe() {
                     <h1 className="text-4xl font-bold text-orange-600 mb-6 text-center">
                         Editar Receita
                     </h1>
-                    <form className="space-y-8">
-                        {/* Nome e descrição */}
+                    <form className="space-y-8" >
+                        
                         <div>
                             <label htmlFor="name" className="block text-brown-600 font-medium mb-2">
                                 Nome da Receita:
@@ -178,10 +170,11 @@ export default function EditRecipe() {
                                 />
                             </div>
                         </div>
+                    </form>
 
                         {/* Gerenciadores */}
                         <div>
-                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Tags</h2>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4 mt-4">Tags</h2>
                             <TagManager
                                 tags={recipe.tags || []}
                                 onAddTag={handleOnAddTag}
@@ -189,19 +182,19 @@ export default function EditRecipe() {
                             />
                         </div>
                         <div>
-                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Ingredientes</h2>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4 mt-4">Ingredientes</h2>
                             <IngredientManager
                                 ingredients={recipe.ingredients || []}
-                                onAdd={() => {}}
+                                onAdd={handleOnaddIngredient}
                                 onDelete={() => {}}
                             />
                         </div>
                         <div>
-                            <h2 className="text-xl font-semibold text-brown-700 mb-4">Passos</h2>
+                            <h2 className="text-xl font-semibold text-brown-700 mb-4 mt-4">Passos</h2>
                             <StepsManager
                                 steps={recipe.steps || []}
-                                onAdd={() => {}}
-                                onDelete={() => {}}
+                                onAdd={handleOnAddStep}
+                                onDelete={handleOnDeleteStep}
                             />
                         </div>
 
@@ -209,10 +202,10 @@ export default function EditRecipe() {
                         <button
                             type="submit"
                             className="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 shadow-md"
+                            onClick={handleSubmit}
                         >
                             Salvar Alterações
                         </button>
-                    </form>
                 </div>
             </div>
         </Template>

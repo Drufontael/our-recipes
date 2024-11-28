@@ -50,7 +50,14 @@ class RecipeService{
 
     async getFilteredRecipes(filter:any) : Promise<RecipeSummary[]> {
         console.log('Filtros enviados: ',filter)
-        const body=JSON.stringify(filter);
+        const filters={
+            filters:{
+                author:filter.author,
+                tags:filter.tags,
+                ingredients:filter.ingredients,
+            }
+        }
+        const body=JSON.stringify(filters);
         console.log(body);
         try{
             const headers: HeadersInit = {

@@ -33,8 +33,7 @@ public class UserEntity {
     @Cascade(CascadeType.ALL)
     private List<String> roles = new ArrayList<>();
 
-    //    private List<Recipe> recipes = new ArrayList<Recipe>();
-    //    private List<Review> reviews = new ArrayList<Review>();
+
 
     public UserEntity(User user) {
         this.id = user.getId();

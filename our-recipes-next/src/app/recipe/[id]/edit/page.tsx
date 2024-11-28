@@ -56,7 +56,7 @@ export default function EditRecipe() {
         event.preventDefault();
         const sucess=await recipeService.updateRecipe(id,recipe);
         if(sucess){
-            router.push(`../${id}`);
+            router.push(`/list`);
         }        
     }
 
@@ -186,7 +186,7 @@ export default function EditRecipe() {
                             <IngredientManager
                                 ingredients={recipe.ingredients || []}
                                 onAdd={handleOnaddIngredient}
-                                onDelete={() => {}}
+                                onDelete={handleOnDeleteIngredient}
                             />
                         </div>
                         <div>

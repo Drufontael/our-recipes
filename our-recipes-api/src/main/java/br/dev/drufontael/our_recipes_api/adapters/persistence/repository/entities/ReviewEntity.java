@@ -19,12 +19,12 @@ public class ReviewEntity {
     private int rating;
     private String comment;
     private LocalDate date;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     @JsonBackReference
     private RecipeEntity recipe;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     public ReviewEntity(Review review,RecipeEntity recipe) {

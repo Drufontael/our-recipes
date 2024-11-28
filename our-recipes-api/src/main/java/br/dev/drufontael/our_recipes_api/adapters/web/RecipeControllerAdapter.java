@@ -67,6 +67,12 @@ public class RecipeControllerAdapter {
     public ResponseEntity<RecipeDto> updateRecipe(@PathVariable Long id, @RequestBody RecipeDto request) {
         Recipe recipe = request.toDomain();
         recipe.setAuthor(getAuthenticatedUser());
+        for (Review r:recipe.getReviews()){
+            if(r.getUser().getId() == null){
+                User user=manageUserPort.findByUsername(r.getUser().getUsername());
+                r.setUser(user);
+            }
+        }
         recipe = manageRecipePort.updateRecipe(id,recipe, getAuthenticatedUser());
         return ResponseEntity.ok(RecipeDto.fromDomain(recipe));
     }

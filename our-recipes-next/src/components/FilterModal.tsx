@@ -5,8 +5,6 @@ import { useGlobalContext } from '../context/GlobalContext'; // Ajuste o caminho
 import { Ingredient } from '@/resource/recipe/ingredient.resource';
 import { Tag } from '@/resource/recipe/tag.resource';
 
-
-
 interface Filter {
   user: boolean;
   tags: Tag[];
@@ -29,18 +27,24 @@ export default function FilterModal({
   const [userFilter, setUserFilter] = useState(false);
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [selectedIngredients, setSelectedIngredients] = useState<Ingredient[]>([]);
-  const [statusFilter, setStatusFilter] = useState(false);
 
   if (!isOpen) return null;
 
   const handleSubmit = () => {
+    const hasFilters = userFilter || selectedTags.length > 0 || selectedIngredients.length > 0;
     onSubmit({
       user: userFilter,
       tags: selectedTags,
       ingredients: selectedIngredients,
-      status: statusFilter,
+      status: hasFilters, // Ativo se ao menos 1 filtro for selecionado
     });
     onClose(); // Fecha o modal após o envio
+  };
+
+  const handleClearFilters = () => {
+    setUserFilter(false);
+    setSelectedTags([]);
+    setSelectedIngredients([]);
   };
 
   const toggleTag = (tag: Tag) => {
@@ -134,43 +138,36 @@ export default function FilterModal({
               ))}
             </div>
           </div>
-
-          {/* Filtro Status */}
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="statusFilter"
-              checked={statusFilter}
-              onChange={() => setStatusFilter(!statusFilter)}
-              className="w-4 h-4 text-orange-500 focus:ring-orange-500 border-brown-300 rounded"
-            />
-            <label
-              htmlFor="statusFilter"
-              className="ml-2 text-sm font-body text-brown-500"
-            >
-              Ativo/Inativo
-            </label>
-          </div>
         </div>
 
         {/* Botões */}
-        <div className="flex justify-end mt-4 space-x-4">
+        <div className="flex justify-between mt-4 space-x-4">
           <button
             type="button"
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-body text-white bg-brown-400 rounded-lg hover:bg-brown-500 focus:outline-none"
+            onClick={handleClearFilters}
+            className="px-4 py-2 text-sm font-body text-white bg-gray-400 rounded-lg hover:bg-gray-500 focus:outline-none"
           >
-            Cancelar
+            Limpar Filtros
           </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-4 py-2 text-sm font-body text-white bg-orange-500 rounded-lg hover:bg-orange-600 focus:outline-none"
-          >
-            Aplicar Filtros
-          </button>
+          <div className="flex space-x-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 text-sm font-body text-white bg-brown-400 rounded-lg hover:bg-brown-500 focus:outline-none"
+            >
+              Cancelar
+            </button>
+            <button
+              type="button"
+              onClick={handleSubmit}
+              className="px-4 py-2 text-sm font-body text-white bg-orange-500 rounded-lg hover:bg-orange-600 focus:outline-none"
+            >
+              Aplicar Filtros
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
+

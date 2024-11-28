@@ -189,8 +189,7 @@ public class RecipeService implements ManageRecipePort {
         Recipe recipe = getRecipe(recipeId);
         review.setUser(author);
         recipe.addReview(review);
-        persistence.save(recipe);
-
+        updateRecipe(recipeId,recipe,author);
     }
 
     @Override
@@ -223,8 +222,11 @@ public class RecipeService implements ManageRecipePort {
     private List<Recipe> filterByOneTag(List<Recipe> recipes, Tag tag) {
         List<Recipe> targetList = new ArrayList<>();
         for (Recipe recipe : recipes) {
-            if (recipe.getTags().contains(tag)) {
-                targetList.add(recipe);
+            for(Tag t : recipe.getTags()) {
+                if(t.getName().equals(tag.getName())) {
+                    targetList.add(recipe);
+                    break;
+                }
             }
         }
         return targetList;
@@ -241,8 +243,11 @@ public class RecipeService implements ManageRecipePort {
     private List<Recipe> filterByOneIngredient(List<Recipe> recipes, Ingredient ingredient) {
         List<Recipe> targetList = new ArrayList<>();
         for (Recipe recipe : recipes) {
-            if (recipe.getIngredients().contains(ingredient)) {
-                targetList.add(recipe);
+            for(RecipeIngredient i: recipe.getIngredients()) {
+                if(i.getIngredient().getName().equals(ingredient.getName())) {
+                    targetList.add(recipe);
+                    break;
+                }
             }
         }
         return targetList;

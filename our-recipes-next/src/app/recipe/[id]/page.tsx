@@ -6,14 +6,15 @@ import { Recipe } from "@/resource/recipe/recipe.resource";
 import { useRecipeService } from "@/resource/recipe/recipe.service";
 import { Review } from "@/resource/recipe/review.resource";
 import { useUserService } from "@/resource/user/user.service";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function RecipePage() {
 
   const recipeService = useRecipeService();
-  const userService = useUserService()  
-  const { id }=useParams()
+  const userService = useUserService();
+  const router = useRouter(); 
+  const { id }=useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recipe,setRecipe] = useState<Recipe>();
   const [review,setReview] = useState<Review>();
@@ -57,12 +58,20 @@ export default function RecipePage() {
     setReview(editReview);
     setIsModalOpen(true);
   }
+
+  const handleListRecipe = () =>router.push('/list');
   
   
 
   return (
     
-    <Template>
+    <Template
+      headerActions={{
+        listRecipes:handleListRecipe,
+      }}
+        
+      
+    >
       <div className="bg-cream min-h-screen">
         
         <header className="bg-orange-200 py-8 px-4 text-center shadow-lg">

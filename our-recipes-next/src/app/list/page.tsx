@@ -8,6 +8,7 @@ import { useRecipeService } from '@/resource/recipe/recipe.service';
 import { RecipeSummary } from '@/resource/recipe/recipeSummary.resource';
 import { Tag } from '@/resource/recipe/tag.resource';
 import { useUserService } from '@/resource/user/user.service';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 interface Filter {
@@ -20,6 +21,7 @@ interface Filter {
 export default function List() {
   const recipeService = useRecipeService();
   const userService = useUserService();
+  const router=useRouter();
   const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
@@ -43,6 +45,8 @@ export default function List() {
   function handleFilterRecipes(): void {
     setIsFilterOpen(true);
   }
+
+  const handleAddRecipe = () => router.push('/recipe/new');
 
   const handleOnSubmitFilter = (newFilter: Filter) => {
     if (newFilter.status) {
@@ -80,6 +84,7 @@ export default function List() {
           isActive: isFilterActive, // Reflete se há filtros ativos
           action: handleFilterRecipes,
         },
+        addRecipe: handleAddRecipe,
       }}
     >
       <section>{showRows()}</section>

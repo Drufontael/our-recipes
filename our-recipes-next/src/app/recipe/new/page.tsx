@@ -28,8 +28,14 @@ export default function CreateRecipe() {
   }
   };
 
+  const handleListRecipe = () => router.push('/list');
+
   return (
-    <Template>
+    <Template
+      headerActions={{
+        listRecipes:handleListRecipe,
+      }}
+    >
       <div className="min-h-screen bg-cream p-8">
         <div className="max-w-2xl mx-auto bg-white p-6 rounded-lg shadow-md">
           <h1 className="text-3xl font-bold text-orange-600 mb-6 text-center">

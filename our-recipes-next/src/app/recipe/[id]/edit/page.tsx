@@ -106,11 +106,15 @@ export default function EditRecipe() {
     }
 
 
-
+    const handleListRecipes = () => router.push('../../../list')
 
 
     return (
-        <Template>
+        <Template
+            headerActions={{
+                listRecipes:handleListRecipes,
+            }}
+        >
             <div className="min-h-screen bg-cream p-8">
                 <div className="max-w-5xl mx-auto bg-white p-8 rounded-lg shadow-lg">
                     <h1 className="text-4xl font-bold text-orange-600 mb-6 text-center">

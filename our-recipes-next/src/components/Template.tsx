@@ -42,7 +42,7 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
           {headerActions?.listRecipes && (
             <button
               onClick={headerActions.listRecipes}
-              className="bg-orange-500 text-white py-2 px-4 rounded-lg hover:bg-orange-600"
+              className="bg-orange-500 text-white py-2 px-6 rounded-lg font-body shadow-md hover:bg-orange-600 active:scale-95 transition-transform"
             >
               Listar Receitas
             </button>
@@ -52,7 +52,7 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
           {headerActions?.filterRecipes && (
             <button
               onClick={headerActions.filterRecipes.action}
-              className={`py-2 px-4 rounded-lg ${
+              className={`py-2 px-6 rounded-lg font-body shadow-md transition-transform active:scale-95 ${
                 headerActions.filterRecipes.isActive
                   ? "bg-green-500 text-white hover:bg-green-600"
                   : "bg-gray-400 text-gray-200 hover:bg-gray-500"
@@ -66,7 +66,7 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
           {headerActions?.addRecipe && (
             <button
               onClick={headerActions.addRecipe}
-              className="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600"
+              className="bg-orange-500 text-white py-2 px-6 rounded-lg font-body shadow-md hover:bg-orange-600 active:scale-95 transition-transform"
             >
               Adicionar Receita
             </button>
@@ -75,7 +75,7 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
           {/* Botão Retornar */}
           <button
             onClick={() => router.back()}
-            className="bg-brown-400 text-white py-2 px-4 rounded-lg hover:bg-brown-500"
+            className="bg-brown-400 text-white py-2 px-6 rounded-lg font-body shadow-md hover:bg-brown-500 active:scale-95 transition-transform"
           >
             Retornar
           </button>
@@ -84,6 +84,7 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
     </header>
   );
 };
+
 
 const Footer: React.FC = () => {
   return (

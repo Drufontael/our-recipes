@@ -179,6 +179,25 @@ class RecipeService{
         }
     }
 
+    async deleteRecipe(id:any):Promise<void>{
+        try{
+            const headers: HeadersInit = {
+                'Content-Type': 'application/json',
+            };
+            if (this.token) {
+                headers['Authorization'] = `Bearer ${this.token}`;
+            }
+            await fetch(`${this.baseUrl}/${id}`, {
+            method: 'DELETE', // Método HTTP
+            headers:headers,
+            });
+
+        }  catch (error) {
+            console.error('Erro ao se comunicar com o servidor:', error);
+            throw error;
+        }
+    }
+
     async addTag(tag:Tag,id:any) {
         try{
             const headers: HeadersInit = {

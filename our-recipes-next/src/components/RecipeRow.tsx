@@ -7,15 +7,14 @@ import { RecipeSummary } from "@/resource/recipe/recipeSummary.resource";
 
 interface RecipeRowProps {
   recipe: RecipeSummary;
+  onDelete:(id:any)=>void  
 }
 
-function onDelete(id:any):any{
 
-} 
 
-export const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }: RecipeRowProps) => {
+export const RecipeRow: React.FC<RecipeRowProps> = ({ recipe,onDelete }: RecipeRowProps) => {
   const router = useRouter();
-
+  
   const handleView = () => {
     router?.push(`/recipe/${recipe.id}`);
   };
@@ -24,8 +23,10 @@ export const RecipeRow: React.FC<RecipeRowProps> = ({ recipe }: RecipeRowProps) 
     router?.push(`/recipe/${recipe.id}/edit`);
   };
 
-  const handleDelete = () => {
+  const handleDelete = (event:React.MouseEvent) => {
+    event.preventDefault();
     if (confirm("Tem certeza de que deseja deletar esta receita?")) {
+      event.defaultPrevented;
       onDelete(recipe.id);
     }
   };

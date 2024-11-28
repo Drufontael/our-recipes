@@ -70,11 +70,21 @@ export default function List() {
   };
 
   function fillRow(recipe: RecipeSummary) {
-    return <RecipeRow key={recipe.id} recipe={recipe} />;
+    return <RecipeRow key={recipe.id} recipe={recipe} onDelete={handleOnDelete}/>;
   }
 
   function showRows() {
     return recipes.map(fillRow);
+  }
+
+  const handleOnDelete = async(id:any) =>{
+    try{
+      await recipeService.deleteRecipe(id);
+      fetchRecipes();
+    } catch (error) {
+      console.error("Erro ao deletar receita:", error);
+      alert("Não foi possível deletar a receita. Tente novamente mais tarde.");
+    }
   }
 
   return (

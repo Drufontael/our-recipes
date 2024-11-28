@@ -27,8 +27,10 @@ public class RecipePersistenceAdapter implements PersistenceRecipePort {
     @Override
     @Transactional
     public void delete(Recipe recipe) {
-        repository.findById(recipe.getId())
-                .ifPresentOrElse(repository::delete, () -> new ResourceNotFoundException("Recipe not found"));
+        RecipeEntity recipeEntity = repository.findById(recipe.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found"));
+        recipeEntity.setActive(false);
+        repository.save(recipeEntity);
     }
 
     @Override
@@ -51,6 +53,6 @@ public class RecipePersistenceAdapter implements PersistenceRecipePort {
     @Override
     @Transactional(readOnly = true)
     public List<Recipe> findAll() {
-        return repository.findAll().stream().map(RecipeEntity::toDomain).toList();
+        return repository.findAllByActiveTrue().stream().map(RecipeEntity::toDomain).toList();
     }
 }

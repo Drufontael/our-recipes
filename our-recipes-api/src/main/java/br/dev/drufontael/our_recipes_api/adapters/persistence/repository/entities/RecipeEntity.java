@@ -40,6 +40,7 @@ public class RecipeEntity {
     @ManyToOne
     @JoinColumn(name = "author_id")
     private UserEntity author;
+    private boolean active=true;
 
     public RecipeEntity(Recipe recipe) {
         this.id = recipe.getId();

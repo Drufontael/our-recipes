@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: our-recipes-api
+  profiles:
+    active: dev
+
+security:
+  config:
+    prefix: ${SECURITY_PREFIX:Bearer}
+    key: ${SECURITY_KEY:54cc26e364ac66062a7cd7f1efc176eba645de1f3a43666d09aac5bc667c3886}
+    expiration: ${SECURITY_EXPIRATION:360000}
+    root: ${SECURITY_ROOT:admin}
+    root.password: ${SECURITY_ROOT_PASSWORD:admin}
+
+#Test
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+  datasource:
+    url: jdbc:h2:mem:${DB_NAME:defaultdb}
+    driverClassName: org.h2.Driver
+    username: ${DB_USERNAME:sa}
+    password: ${DB_PASSWORD:password}
+    platform: h2
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: false
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+script:
+  sql:
+    path: src/main/resources/static/import.sql
+
+#Dev
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/our_recipes
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+script:
+  sql:
+    path: src/main/resources/static/import.sql
+
+#Prod
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:db}:5432/our_recipes
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+
+  jpa:
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+script:
+  sql:
+    path: src/main/resources/static/import.sql

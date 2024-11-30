@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { Template, RecipeRow } from '@/components';
 import FilterModal from '@/components/FilterModal';
@@ -26,6 +26,8 @@ export default function List() {
   const [isFilterOpen, setIsFilterOpen] = useState<boolean>(false);
   const [isFilterActive, setIsFilterActive] = useState<boolean>(false);
   const [filter, setFilter] = useState({});
+
+ 
 
   async function fetchRecipes() {
     try {

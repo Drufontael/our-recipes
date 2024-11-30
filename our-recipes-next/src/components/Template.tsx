@@ -1,11 +1,14 @@
+'use client'
+
 import { GlobalProvider } from "@/context/GlobalContext";
 import React from "react";
 import { useRouter } from "next/navigation"; // Use 'next/router' se estiver usando Next.js abaixo da versão 13.
+import { useUserService } from "@/resource/user/user.service";
 
 interface TemplateProps {
   children: React.ReactNode;
   headerActions?: {
-    listRecipes?: () => void;
+    listRecipes?: boolean;
     filterRecipes?: {
       isActive: boolean;
       action: () => void;
@@ -15,6 +18,9 @@ interface TemplateProps {
 }
 
 export const Template: React.FC<TemplateProps> = (props: TemplateProps) => {
+  
+  
+
   return (
     <GlobalProvider>
       <div className="h-screen w-screen bg-cream flex flex-col">
@@ -32,21 +38,30 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
   headerActions,
 }) => {
   const router = useRouter();
+  const user:string|null = useUserService().getUser();
+  const auth=useUserService();
+  const logout = () =>{
+    auth.closeSession();
+    router.push('/login');
+  }
+  const showList = () =>{
+    auth.getUser()?
+    router.push('/list'):
+    router.push('/login');
+  }
 
   return (
     <header className="bg-brown-500 text-cream py-3 shadow-md">
       <div className="container mx-auto flex justify-between items-center px-4">
-        <h1 className="text-3xl font-title">Our Recipes</h1>
+        {headerActions?.listRecipes?(
+          <a href="#" onClick={showList}>
+            <h1 className="text-3xl font-title">Our Recipes</h1>
+          </a>
+        ):(
+          <h1 className="text-3xl font-title">Our Recipes</h1>
+        )}
+        
         <div className="flex space-x-4">
-          {/* Botão Listar Receitas */}
-          {headerActions?.listRecipes && (
-            <button
-              onClick={headerActions.listRecipes}
-              className="bg-orange-500 text-white py-2 px-6 rounded-lg font-body shadow-md hover:bg-orange-600 active:scale-95 transition-transform"
-            >
-              Listar Receitas
-            </button>
-          )}
 
           {/* Botão Filtrar Receitas */}
           {headerActions?.filterRecipes && (
@@ -72,14 +87,15 @@ const Header: React.FC<{ headerActions?: TemplateProps["headerActions"] }> = ({
             </button>
           )}
 
-          {/* Botão Retornar */}
-          <button
-            onClick={() => router.back()}
-            className="bg-brown-400 text-white py-2 px-6 rounded-lg font-body shadow-md hover:bg-brown-500 active:scale-95 transition-transform"
-          >
-            Retornar
-          </button>
-        </div>
+          {user &&
+          <div className="flex text-cream items-center">
+            <span className="py-3 px-4 text-md">Olá, {user}</span>
+            <a href="#" onClick={logout}>
+            <span className="py-3 px-4 text-sm">Sair</span>
+            </a>
+          </div>
+          }
+        </div>        
       </div>
     </header>
   );

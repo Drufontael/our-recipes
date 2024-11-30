@@ -1,3 +1,5 @@
+'use client'
+
 import React from "react";
 import { Review } from "@/resource/recipe/review.resource";
 

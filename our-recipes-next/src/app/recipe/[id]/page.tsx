@@ -1,4 +1,5 @@
 'use client'
+
 import { Template } from "@/components";
 import { ReviewCard } from "@/components/ReviewCard";
 import ReviewModal from "@/components/ReviewModal";
@@ -59,18 +60,15 @@ export default function RecipePage() {
     setIsModalOpen(true);
   }
 
-  const handleListRecipe = () =>router.push('/list');
-  
+ 
   
 
   return (
     
     <Template
       headerActions={{
-        listRecipes:handleListRecipe,
-      }}
-        
-      
+        listRecipes:true,
+      }}  
     >
       <div className="bg-cream min-h-screen">
         

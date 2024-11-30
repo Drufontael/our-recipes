@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { Template } from "@/components";
 import { Recipe } from "@/resource/recipe/recipe.resource";
@@ -28,12 +28,11 @@ export default function CreateRecipe() {
   }
   };
 
-  const handleListRecipe = () => router.push('/list');
 
   return (
     <Template
       headerActions={{
-        listRecipes:handleListRecipe,
+        listRecipes:true,
       }}
     >
       <div className="min-h-screen bg-cream p-8">

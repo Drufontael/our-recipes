@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -51,6 +52,23 @@ public class JWTFilter extends OncePerRequestFilter {
         }
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String[] WHITELIST = {
+                "/",
+                "/v1/api/users",
+                "/v1/api/users/login",
+                "/v1/api/users/register",
+                "/v1/api/ingredients",
+                "/v1/api/measurement-units",
+                "/v1/api/tags",
+                "/swagger-ui.html",
+                "/h2-console/**"
+        };
+        String uri = request.getRequestURI();
+        return Arrays.stream(WHITELIST).anyMatch(uri::equals);
+    }
+
     private void handleException(HttpServletResponse response, HttpStatus status, String message, HttpServletRequest request, Exception e) throws IOException {
         logger.error("JWT Error: ", e);
 
@@ -60,8 +78,6 @@ public class JWTFilter extends OncePerRequestFilter {
         String jsonResponse = getErrorMessage(status.toString(), message, request);
         response.getWriter().write(jsonResponse);
 
-
-        return;
     }
 
     private List<SimpleGrantedAuthority> authorities(List<String> roles) {

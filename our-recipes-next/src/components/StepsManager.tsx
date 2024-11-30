@@ -1,3 +1,5 @@
+'use client'
+
 import { Step } from "@/resource/recipe/step.resource";
 import { useState } from "react";
 

@@ -1,0 +1,67 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: our_recipes
+    ports:
+      - "5432:5432"
+    volumes:
+      - .our-recipes-api/data:/var/lib/postgresql/data
+    networks:
+      - ourecipesnetwork
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "15432:80"
+    depends_on:
+     - db
+    networks:
+      - ourecipesnetwork
+
+  our-recipes-api:
+    build:
+      dockerfile: Dockerfile
+      context: ./our-recipes-api
+    container_name: our-recipes-api
+    restart: on-failure
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    environment:
+      - "POSTGRES_HOST=db"
+      - "DB_NAME=our_recipes"
+      - "DB_USERNAME=postgres"
+      - "DB_PASSWORD=postgres"
+    networks:
+      - ourecipesnetwork
+
+  our-recipes-next:
+    build:
+      dockerfile: Dockerfile
+      context: ./our-recipes-next
+    container_name: our-recipes-next
+    restart: on-failure
+    depends_on:
+      - our-recipes-api
+    ports:
+      - "3000:3000"
+    networks:
+      - ourecipesnetwork
+    expose:
+      - 3000
+
+
+networks:
+  ourecipesnetwork:
+    driver: bridge

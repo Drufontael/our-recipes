@@ -148,6 +148,36 @@ classDiagram
 
 
     User "1" *-- "0..*" Review : reviews
-    User "1" o-- "0..*" Recipe : recipes
     User "1" *-- "1..*" Role: roles
 ```
+### Escolha das Tecnologias
+Para desenvolver o Nossas Receitas (OurRecipes), optei por tecnologias que aliam eficiência, escalabilidade e minha familiaridade como desenvolvedor. Abaixo, detalho as principais escolhas para o back-end, front-end e banco de dados.
+
+#### ***Back-end:*** Java com Spring Boot
+O Spring Boot foi a base para a construção do back-end por diversos motivos:
+
+- **Familiaridade:** Como desenvolvedor habituado ao ecossistema Java, essa escolha permite maior agilidade e produtividade.
+- **Framework consolidado:** O Spring Boot é amplamente reconhecido por sua robustez e suporte a padrões de mercado, como REST APIs e integração com bancos de dados.
+- **Facilidade de integração:** Com suporte nativo para validações, segurança (Spring Security) e ferramentas ORM (Hibernate/JPA), ele facilita a implementação de uma aplicação bem estruturada e escalável.
+Além disso, o uso do Java oferece:
+
+- **Tipagem estática:** Garante maior segurança no desenvolvimento e evita erros em tempo de execução.
+Portabilidade: Permite a execução em qualquer ambiente com suporte a JVM.
+
+#### ***Front-end:*** Next.js com TypeScript
+No front-end, optei pelo Next.js combinado com TypeScript. Essa escolha foi baseada nos seguintes fatores:
+
+- **Next.js:**
+Framework React de alto desempenho, que permite renderização no lado do servidor (SSR) e no lado do cliente (CSR). Isso melhora o SEO e a experiência do usuário.
+Rotas dinâmicas facilitam a criação de interfaces específicas para as receitas e avaliações.
+- **TypeScript:**
+Por ser uma linguagem tipada, o TypeScript se aproxima do estilo de programação do Java. Isso garante maior segurança e previsibilidade ao desenvolver componentes e serviços.
+Ajuda a identificar erros durante o desenvolvimento, aumentando a qualidade do código.
+
+#### ***Banco de Dados:*** PostgreSQL
+O banco de dados escolhido foi o PostgreSQL, devido a:
+
+- **Desempenho:** Ideal para aplicações com grande volume de dados e suporte a consultas complexas.
+- **Confiabilidade:** É um banco de dados robusto, amplamente utilizado em produção.
+- **Recursos avançados:** Suporte a chaves primárias compostas, relacionamentos complexos e extensões úteis, como o pgcrypto para hashing seguro de senhas.
+- **Compatibilidade:** O Spring Data JPA oferece integração nativa com o PostgreSQL, simplificando a configuração e o acesso aos dados.

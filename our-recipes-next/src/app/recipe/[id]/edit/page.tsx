@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import { Template,IngredientManager,StepsManager,TagManager  } from "@/components";
 import { Recipe } from "@/resource/recipe/recipe.resource";
@@ -106,13 +106,13 @@ export default function EditRecipe() {
     }
 
 
-    const handleListRecipes = () => router.push('../../../list')
+   
 
 
     return (
         <Template
             headerActions={{
-                listRecipes:handleListRecipes,
+                listRecipes:true,
             }}
         >
             <div className="min-h-screen bg-cream p-8">

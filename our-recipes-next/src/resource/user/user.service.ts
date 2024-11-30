@@ -1,3 +1,5 @@
+'use client'
+
 import { error } from "console";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
@@ -5,7 +7,7 @@ import { useMemo } from "react";
 
 class UserService{
     private static instance:UserService;
-    baseUrl: string = 'http://localhost:8080/v1/api/users';
+    baseUrl: string = process.env.NEXT_PUBLIC_API_URL+'/v1/api/users';
     private authToken: string | null = null;
     private authUser: string | null = null;
 
@@ -82,16 +84,27 @@ class UserService{
 
     getToken(): string | null {
         if (!this.authToken) {
-            this.authToken = localStorage.getItem('authToken');
+            if (typeof window !== "undefined") {
+                this.authToken = localStorage.getItem('authToken');
+            }
         }
         return this.authToken;
     }
 
     getUser():string | null {
         if (!this.authUser) {
-            this.authUser = localStorage.getItem('authUser');
+            if (typeof window !== "undefined") {
+                this.authUser = localStorage.getItem('authUser');
+            }
         }
         return this.authUser;
+    }
+
+    closeSession(){
+        this.authToken=null;
+        this.authUser=null;
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
     }
 }
 

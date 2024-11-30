@@ -1,21 +1,35 @@
+'use client'
+
+
+import { Recipe } from '@/resource/recipe/recipe.resource';
 
 import { useUserService } from '@/resource/user/user.service';
-import { Recipe } from './recipe.resource';
 import { RecipeSummary } from './recipeSummary.resource';
 import { Tag } from './tag.resource';
 import { RecipeIngredient } from './recipeIngredient.resource';
 import { Step } from './step.resource';
 import { Review } from './review.resource';
+import { useRouter } from 'next/navigation';
 
 
 class RecipeService{
     userService= useUserService();
-    baseUrl: string = 'http://localhost:8080/v1/api/recipes';
+    baseUrl: string = process.env.NEXT_PUBLIC_API_URL+'/v1/api/recipes';
     token:string | null;
+    router=useRouter();
 
 
     public constructor(){
         this.token = this.userService?.getToken() || '';
+
+    }
+
+    handleExpiredToken = (error:any) =>{
+        if(error.message==='JWT token expired'){
+            this.userService.closeSession();
+            alert('Sessão expirada refaça o login!')
+            this.router.push('/login')
+        }
 
     }
 
@@ -36,6 +50,7 @@ class RecipeService{
                 // Tentando obter detalhes do erro
                 const errorDetails = await response.json();
                 console.error('Erro da API:', errorDetails);
+                this.handleExpiredToken(errorDetails);
                 throw new Error(
                     `Erro ao buscar receitas: ${errorDetails.message} (Status: ${errorDetails.status})`
                 );
@@ -73,8 +88,8 @@ class RecipeService{
             });
 
             if (!response.ok) {
-                // Tentando obter detalhes do erro
                 const errorDetails = await response.json();
+                this.handleExpiredToken(errorDetails);
                 console.error('Erro da API:', errorDetails);
                 throw new Error(
                     `Erro ao buscar receitas: ${errorDetails.message} (Status: ${errorDetails.status})`
@@ -103,6 +118,7 @@ class RecipeService{
 
             if (!response.ok) {
                 const errorDetails = await response.json();
+                this.handleExpiredToken(errorDetails);
                 console.error('Erro da API:', errorDetails);
                 throw new Error(
                     `Erro ao buscar receitas: ${errorDetails.message} (Status: ${errorDetails.status})`
@@ -114,6 +130,7 @@ class RecipeService{
             throw error;
         }
     }
+
     
     async createRecipe(
                 name?: string,
@@ -139,6 +156,7 @@ class RecipeService{
             )
             if (!response.ok) {
                 const errorDetails = await response.json();
+                this.handleExpiredToken(errorDetails);
                 console.error('Erro da API:', errorDetails);
                 throw new Error(
                     `Erro ao buscar receitas: ${errorDetails.message} (Status: ${errorDetails.status})`
@@ -167,6 +185,7 @@ class RecipeService{
 
             if (!response.ok) {
                 const errorDetails = await response.json();
+                this.handleExpiredToken(errorDetails);
                 console.error('Erro da API:', errorDetails);
                 throw new Error(
                     `Erro ao alterar receita: ${errorDetails.message} (Status: ${errorDetails.status})`
@@ -488,6 +507,21 @@ class RecipeService{
         }
         
     }
+
+    async getAuthor(id:any):Promise<string>{
+        try{
+            const recipe= await this.getRecipeById(id);
+            if(recipe){
+                return recipe.author?recipe.author:'';
+            }
+            return '';
+        }  catch (error) {
+            console.error('Erro ao se comunicar com o servidor:', error);
+            throw error;
+        }
+       
+    }    
+        
 
 }
 

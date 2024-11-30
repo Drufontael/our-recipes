@@ -16,6 +16,7 @@ export default {
           600: '#FF6347', // Tomato
         },
         green: {
+          300: '#86efac',
           500: '#6B8E23', // Olive Drab
           600: '#556B2F', // Dark Olive Green
         },

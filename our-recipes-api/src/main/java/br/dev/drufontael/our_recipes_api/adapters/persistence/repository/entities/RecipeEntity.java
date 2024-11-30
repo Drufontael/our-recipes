@@ -41,6 +41,7 @@ public class RecipeEntity {
     @JoinColumn(name = "author_id")
     private UserEntity author;
     private boolean active=true;
+    private double rating;
 
     public RecipeEntity(Recipe recipe) {
         this.id = recipe.getId();
@@ -55,6 +56,7 @@ public class RecipeEntity {
         this.steps.addAll(recipe.getSteps().stream().map(step -> new StepEntity(step, this)).toList());
         this.author = new UserEntity(recipe.getAuthor());
         this.reviews.addAll(recipe.getReviews().stream().map(review-> new ReviewEntity(review, this)).toList());
+        this.rating = recipe.getRating();
     }
 
     public Recipe toDomain() {

@@ -55,6 +55,7 @@ public class RecipePersistenceAdapter implements PersistenceRecipePort {
     @Transactional(readOnly = true)
     public List<Recipe> findAll() {
         Sort sort = Sort.by(Sort.Direction.ASC, "rating");
-        return repository.findAllByActiveTrue(sort).stream().map(RecipeEntity::toDomain).sorted().toList();
+        List<RecipeEntity> entities = repository.findAll(sort);
+        return repository.findAllByActiveTrue().stream().map(RecipeEntity::toDomain).sorted().toList();
     }
 }

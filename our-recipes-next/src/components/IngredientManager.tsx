@@ -1,3 +1,5 @@
+'use client'
+
 import { useGlobalContext } from "@/context/GlobalContext";
 import { Ingredient } from "@/resource/recipe/ingredient.resource";
 import { MeasurementUnit } from "@/resource/recipe/measurementUnit.resource";

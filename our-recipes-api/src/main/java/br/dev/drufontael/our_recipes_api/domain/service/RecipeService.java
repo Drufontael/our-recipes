@@ -56,16 +56,16 @@ public class RecipeService implements ManageRecipePort {
     @Override
     public List<Recipe> getRecipes() {
         List<Recipe> recipes = persistence.findAll();
-        //Collections.sort(recipes); //TODO veificar essa falha
         return recipes;
     }
 
     @Override
     public List<Recipe> getRecipes(Map<String, List<String>> filters) {
-        List<Recipe> authorRecipes = getRecipes();
+        List<Recipe> authorRecipes =new ArrayList<>();
+        authorRecipes.addAll(getRecipes());
         if (filters.containsKey("author")) {
             User user = persistenceUserPort.findByUsername(filters.get("author").get(0)).orElse(new User());
-            authorRecipes.removeIf(recipe -> !recipe.getAuthor().equals(user));
+            authorRecipes.removeIf(recipe -> !recipe.getAuthor().getUsername().equals(user.getUsername()));
         }
         List<Tag> tags = new ArrayList<>();
         if (filters.containsKey("tags")) {
@@ -189,7 +189,7 @@ public class RecipeService implements ManageRecipePort {
         Recipe recipe = getRecipe(recipeId);
         review.setUser(author);
         recipe.addReview(review);
-        updateRecipe(recipeId,recipe,author);
+        persistence.save(recipe);
     }
 
     @Override

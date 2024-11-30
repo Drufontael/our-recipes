@@ -1,4 +1,4 @@
-version: '3.9'
+
 
 services:
   db:
@@ -11,7 +11,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - .our-recipes-api/data:/var/lib/postgresql/data
+      - ./our-recipes-api/data:/var/lib/postgresql/data
     networks:
       - ourecipesnetwork
 

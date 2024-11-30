@@ -2,7 +2,7 @@ package br.dev.drufontael.our_recipes_api.infrastructure;
 
 import br.dev.drufontael.our_recipes_api.domain.exception.UserNotFoundException;
 import br.dev.drufontael.our_recipes_api.domain.model.*;
-import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageRecipePort;
+import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageIngredientPort;
 import br.dev.drufontael.our_recipes_api.domain.ports.in.ManageUserPort;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class DatabaseInitService {
 
     private final JdbcTemplate jdbcTemplate;
     private final ManageUserPort manageUserPort;
-    private final ManageRecipePort manageRecipePort;
+    private final ManageIngredientPort manageIngredientPort;
     private final PasswordEncoder encoder;
 
     @Value("${script.sql.path}")
@@ -31,9 +31,11 @@ public class DatabaseInitService {
     @Value("${security.config.root.password}")
     private String securityConfigRootPassword;
 
-    public DatabaseInitService(JdbcTemplate jdbcTemplate, ManageUserPort manageUserPort, PasswordEncoder encoder,
-                               ManageRecipePort manageRecipePort) {
-        this.manageRecipePort = manageRecipePort;
+    public DatabaseInitService(JdbcTemplate jdbcTemplate, 
+                               ManageUserPort manageUserPort, 
+                               PasswordEncoder encoder,
+                               ManageIngredientPort manageIngredientPort) {
+        this.manageIngredientPort = manageIngredientPort;
         this.jdbcTemplate = jdbcTemplate;
         this.manageUserPort = manageUserPort;
         this.encoder = encoder;
@@ -47,6 +49,7 @@ public class DatabaseInitService {
 
 
     public void runScript() throws IOException {
+        if(!manageIngredientPort.getAll().isEmpty()) return;
         String sql = new String(Files.readAllBytes(Paths.get(scriptPath)));
         jdbcTemplate.execute(sql);
     }

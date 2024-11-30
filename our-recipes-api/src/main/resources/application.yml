@@ -6,11 +6,11 @@ spring:
 
 security:
   config:
-    prefix: ${SECURITY_PREFIX:Bearer}
-    key: ${SECURITY_KEY:54cc26e364ac66062a7cd7f1efc176eba645de1f3a43666d09aac5bc667c3886}
-    expiration: ${SECURITY_EXPIRATION:360000}
-    root: ${SECURITY_ROOT:admin}
-    root.password: ${SECURITY_ROOT_PASSWORD:admin}
+    prefix: ${SECURITY_PREFIX}
+    key: ${SECURITY_KEY}
+    expiration: ${SECURITY_EXPIRATION}
+    root: ${SECURITY_ROOT}
+    root.password: ${SECURITY_ROOT_PASSWORD}
 
 #Test
 ---
@@ -19,10 +19,10 @@ spring:
     activate:
       on-profile: test
   datasource:
-    url: jdbc:h2:mem:${DB_NAME:defaultdb}
+    url: jdbc:h2:mem:${DB_NAME}
     driverClassName: org.h2.Driver
-    username: ${DB_USERNAME:sa}
-    password: ${DB_PASSWORD:password}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     platform: h2
 
   jpa:
@@ -49,9 +49,9 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/our_recipes
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
 
   jpa:
@@ -73,9 +73,9 @@ spring:
 
 
   datasource:
-    url: jdbc:postgresql://${POSTGRES_HOST:db}:5432/our_recipes
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:postgres}
+    url: jdbc:postgresql://${POSTGRES_HOST:db}:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     database: POSTGRESQL
